@@ -283,44 +283,118 @@ def haberleri_eslestir(haberler, takip_listesi):
 
 # (SADECE DEĞİŞEN KISIM: format_mail)
 
-def format_mail(results):
-    toplam = sum(len(v) for v in results.values())
-    en_aktif = max(results, key=lambda k: len(results[k])) if toplam > 0 else None
-
-    mail = f"""PAX Retail Signal | Günlük Intel
-
-Toplam gelişme: {toplam}
-En aktif alan: {en_aktif if en_aktif else "Yok"}
-
-────────────────────────────
-"""
+def format_mail(results, toplam_yeni_haber=None, gosterilen_limit=None):
+    toplam_gosterilen = sum(len(v) for v in results.values())
+    toplam_yeni = toplam_yeni_haber if toplam_yeni_haber is not None else toplam_gosterilen
+    en_aktif = max(results, key=lambda k: len(results[k])) if toplam_gosterilen > 0 else None
+    tarih = datetime.now().strftime("%d.%m.%Y %H:%M")
 
     sections = {
-        "Müşteriler": "🟢 MÜŞTERİLER",
-        "KasaPOS Firmaları": "🟡 KASA / ERP",
-        "Rakipler": "🔴 RAKİPLER",
-        "Fintech & Bankalar": "🔵 FINTECH / BANKA"
+        "Müşteriler": {"title": "MÜŞTERİLER", "icon": "🟢", "color": "#16a34a", "bg": "#f0fdf4"},
+        "KasaPOS Firmaları": {"title": "KASA / ERP", "icon": "🟡", "color": "#ca8a04", "bg": "#fefce8"},
+        "Rakipler": {"title": "RAKİPLER", "icon": "🔴", "color": "#dc2626", "bg": "#fef2f2"},
+        "Fintech & Bankalar": {"title": "FINTECH / BANKA", "icon": "🔵", "color": "#2563eb", "bg": "#eff6ff"},
     }
 
-    for key, title in sections.items():
-        if results.get(key):
-            mail += f"\n{title}\n\n"
+    def esc(value):
+        return html.escape(str(value or ""), quote=True)
 
-            for r in results[key]:
-                sektor = f" — {r.get('sektor')}" if r.get("sektor") else ""
-                mail += f"• {r.get('isim')}{sektor}\n"
-                mail += f"  → {r.get('baslik')}\n"
+    html_body = f"""
+<!doctype html>
+<html>
+  <body style="margin:0; padding:0; background:#f3f4f6; font-family:Arial, Helvetica, sans-serif; color:#111827;">
+    <div style="max-width:860px; margin:0 auto; padding:24px;">
+      <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:18px; overflow:hidden; box-shadow:0 8px 24px rgba(15,23,42,0.06);">
+        <div style="padding:28px 30px; background:#111827; color:#ffffff;">
+          <div style="font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:#cbd5e1;">PAX Retail Signal</div>
+          <h1 style="margin:8px 0 6px 0; font-size:28px; line-height:1.25;">Günlük Intel Raporu</h1>
+          <div style="font-size:14px; color:#e5e7eb;">{esc(tarih)}</div>
+        </div>
 
-    if toplam == 0:
-        mail += "\nBugün anlamlı bir gelişme tespit edilmedi.\n"
+        <div style="padding:24px 30px;">
+          <h2 style="margin:0 0 14px 0; font-size:20px; color:#111827;">Executive Summary</h2>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; margin-bottom:22px;">
+            <tr>
+              <td style="width:33%; padding:14px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:12px;">
+                <div style="font-size:12px; color:#6b7280;">Toplam yeni gelişme</div>
+                <div style="font-size:26px; font-weight:700; color:#111827;">{toplam_yeni}</div>
+              </td>
+              <td style="width:2%;"></td>
+              <td style="width:33%; padding:14px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:12px;">
+                <div style="font-size:12px; color:#6b7280;">Mailde gösterilen</div>
+                <div style="font-size:26px; font-weight:700; color:#111827;">{toplam_gosterilen}</div>
+              </td>
+              <td style="width:2%;"></td>
+              <td style="width:30%; padding:14px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:12px;">
+                <div style="font-size:12px; color:#6b7280;">En aktif alan</div>
+                <div style="font-size:18px; font-weight:700; color:#111827;">{esc(en_aktif if en_aktif else "Yok")}</div>
+              </td>
+            </tr>
+          </table>
+"""
 
-    mail += "\n────────────────────────────\n"
-    mail += "PAX Retail Intelligence Engine"
+    if toplam_gosterilen == 0:
+        html_body += """
+          <div style="padding:18px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:14px; color:#374151;">
+            Bugün anlamlı bir gelişme tespit edilmedi. Sistem kontrol amaçlı çalıştı.
+          </div>
+"""
+    else:
+        if toplam_yeni > toplam_gosterilen:
+            html_body += f"""
+          <div style="padding:14px 16px; background:#fff7ed; border:1px solid #fed7aa; border-radius:12px; color:#9a3412; margin-bottom:20px;">
+            Bu çalıştırmada toplam <b>{toplam_yeni}</b> yeni haber bulundu. Mailde ilk <b>{toplam_gosterilen}</b> kayıt gösteriliyor.
+          </div>
+"""
 
-    return mail
+        for key, meta in sections.items():
+            items = results.get(key, [])
+            if not items:
+                continue
+
+            html_body += f"""
+          <div style="margin-top:26px;">
+            <div style="display:block; padding:14px 16px; background:{meta['bg']}; border-left:6px solid {meta['color']}; border-radius:12px; margin-bottom:12px;">
+              <span style="font-size:22px; vertical-align:middle;">{meta['icon']}</span>
+              <span style="font-size:21px; font-weight:800; color:#111827; margin-left:8px;">{meta['title']}</span>
+              <span style="font-size:14px; color:#6b7280; margin-left:8px;">({len(items)} haber)</span>
+            </div>
+"""
+
+            for idx, r in enumerate(items, 1):
+                firma = esc(r.get("isim"))
+                sektor = esc(r.get("sektor"))
+                baslik = esc(r.get("baslik"))
+                kaynak = esc(r.get("kaynak"))
+                link = esc(r.get("link"))
+                sektor_html = f"<span style='color:#6b7280;'> — {sektor}</span>" if sektor else ""
+                link_html = f"<a href=\"{link}\" target=\"_blank\" style=\"display:inline-block; margin-top:10px; color:#2563eb; text-decoration:none; font-weight:700;\">Haberi aç →</a>" if link else ""
+
+                html_body += f"""
+            <div style="padding:16px 18px; border:1px solid #e5e7eb; border-radius:14px; margin-bottom:12px; background:#ffffff;">
+              <div style="font-size:13px; color:#6b7280; margin-bottom:6px;">#{idx} · {kaynak}</div>
+              <div style="font-size:17px; font-weight:800; color:#111827; margin-bottom:8px;">{firma}{sektor_html}</div>
+              <div style="font-size:15px; line-height:1.5; color:#374151;">{baslik}</div>
+              {link_html}
+            </div>
+"""
+
+            html_body += "          </div>\n"
+
+    html_body += """
+          <div style="margin-top:28px; padding-top:16px; border-top:1px solid #e5e7eb; font-size:12px; color:#6b7280;">
+            Bu rapor PAX Retail Intelligence Engine tarafından otomatik oluşturulmuştur.
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+"""
+    return html_body
 
 
-def send_mail(subject, body_text):
+def send_mail(subject, body_html):
     mail_user = os.environ.get("MAIL_USER")
     mail_password = os.environ.get("MAIL_PASSWORD")
     mail_to = os.environ.get("MAIL_TO")
@@ -336,7 +410,9 @@ def send_mail(subject, body_text):
     msg["From"] = mail_user
     msg["To"] = ", ".join(recipients)
 
-    msg.attach(MIMEText(body_text, "plain", "utf-8"))
+    plain_text = "PAX Retail Signal | Günlük Intel Raporu\n\nBu mail HTML formatında hazırlanmıştır. Görüntüleyemiyorsanız GitHub Issue kaydını kontrol edebilirsiniz."
+    msg.attach(MIMEText(plain_text, "plain", "utf-8"))
+    msg.attach(MIMEText(body_html, "html", "utf-8"))
 
     try:
         with smtplib.SMTP("smtp.gmail.com", 587) as server:
@@ -368,7 +444,8 @@ def mail_results_olustur(yeni_haberler):
             "isim": h.get("firma", ""),
             "sektor": h.get("sektor", ""),
             "baslik": h.get("baslik", ""),
-            "kaynak": h.get("kaynak", "")
+            "kaynak": h.get("kaynak", ""),
+            "link": h.get("link", "")
         })
 
     return results
@@ -604,16 +681,12 @@ def main():
     except Exception as e:
         print("⚠️ Issue açılamadı, mail gönderimine devam ediliyor:", str(e))
 
-    mail_body = format_mail(mail_results_olustur(yeni_mail))
+    mail_body = format_mail(
+        mail_results_olustur(yeni_mail),
+        toplam_yeni_haber=len(yeni),
+        gosterilen_limit=MAIL_LIMIT
+    )
 
-    if len(yeni) > len(yeni_mail):
-        mail_body += (
-            "\n\nNot: Bu çalıştırmada toplam "
-            + str(len(yeni))
-            + " yeni haber bulundu. Mailde ilk "
-            + str(len(yeni_mail))
-            + " kayıt gösterildi."
-        )
     send_mail(
         "PAX Retail Signal | Günlük Intel Raporu",
         mail_body
