@@ -10,6 +10,9 @@ PAX Retail Signal Engine V2 — Sektörlü takip listesi
 
 import os
 import re
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 import json
 import time
 import html
@@ -312,6 +315,36 @@ En aktif alan: {en_aktif if en_aktif else "Yok"}
     return mail
 
 
+def send_mail(subject, body_text):
+    mail_user = os.environ.get("MAIL_USER")
+    mail_password = os.environ.get("MAIL_PASSWORD")
+    mail_to = os.environ.get("MAIL_TO")
+
+    if not mail_user or not mail_password or not mail_to:
+        print("MAIL_USER / MAIL_PASSWORD / MAIL_TO eksik. Mail gönderilmedi.")
+        return
+
+    recipients = [x.strip() for x in mail_to.split(",") if x.strip()]
+
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = subject
+    msg["From"] = mail_user
+    msg["To"] = ", ".join(recipients)
+
+    msg.attach(MIMEText(body_text, "plain", "utf-8"))
+
+    try:
+        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+            server.starttls()
+            server.login(mail_user, mail_password)
+            server.sendmail(mail_user, recipients, msg.as_string())
+
+        print("✅ Mail gönderildi:", ", ".join(recipients))
+
+    except Exception as e:
+        print("❌ Mail gönderim hatası:", str(e))
+
+
 def mail_results_olustur(yeni_haberler):
     results = {
         "Müşteriler": [],
@@ -550,6 +583,12 @@ def main():
         sorunlu,
         takip_listesi,
         kaynak_listesi
+    )
+
+    mail_body = format_mail(mail_results_olustur(yeni))
+    send_mail(
+        "PAX Retail Signal | Günlük Intel Raporu",
+        mail_body
     )
 
     json_yaz(GORULEN_DOSYA, temiz_gorulen)
