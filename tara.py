@@ -284,115 +284,143 @@ def haberleri_eslestir(haberler, takip_listesi):
 # (SADECE DEĞİŞEN KISIM: format_mail)
 
 def format_mail(results, toplam_yeni_haber=None, gosterilen_limit=None):
+    """Görsel, tablo tabanlı HTML mail üretir.
+
+    Gmail/Outlook bazı CSS özelliklerini kısıtladığı için tasarım inline-style ve table yapısı ile kuruldu.
+    """
     toplam_gosterilen = sum(len(v) for v in results.values())
     toplam_yeni = toplam_yeni_haber if toplam_yeni_haber is not None else toplam_gosterilen
     en_aktif = max(results, key=lambda k: len(results[k])) if toplam_gosterilen > 0 else None
     tarih = datetime.now().strftime("%d.%m.%Y %H:%M")
 
     sections = {
-        "Müşteriler": {"title": "MÜŞTERİLER", "icon": "🟢", "color": "#16a34a", "bg": "#f0fdf4"},
-        "KasaPOS Firmaları": {"title": "KASA / ERP", "icon": "🟡", "color": "#ca8a04", "bg": "#fefce8"},
-        "Rakipler": {"title": "RAKİPLER", "icon": "🔴", "color": "#dc2626", "bg": "#fef2f2"},
-        "Fintech & Bankalar": {"title": "FINTECH / BANKA", "icon": "🔵", "color": "#2563eb", "bg": "#eff6ff"},
+        "Müşteriler": {"title": "MÜŞTERİLER", "icon": "🟢", "color": "#16a34a", "soft": "#ecfdf5", "border": "#bbf7d0", "note": "Müşteri ve hedef perakende firmalarındaki gelişmeler"},
+        "KasaPOS Firmaları": {"title": "KASA / ERP", "icon": "🟡", "color": "#ca8a04", "soft": "#fefce8", "border": "#fde68a", "note": "Kasa yazılımı, ERP ve entegrasyon ekosistemi"},
+        "Rakipler": {"title": "RAKİPLER", "icon": "🔴", "color": "#dc2626", "soft": "#fef2f2", "border": "#fecaca", "note": "Rakip ödeme, terminal ve servis oyuncuları"},
+        "Fintech & Bankalar": {"title": "FINTECH / BANKA", "icon": "🔵", "color": "#2563eb", "soft": "#eff6ff", "border": "#bfdbfe", "note": "Banka, fintech ve ödeme kabul ekosistemi"},
     }
 
     def esc(value):
         return html.escape(str(value or ""), quote=True)
 
+    def kategori_sayim_html():
+        cells = ""
+        for key, meta in sections.items():
+            adet = len(results.get(key, []))
+            cells += f"""
+              <td style="width:25%; padding:6px; vertical-align:top;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate; border-spacing:0; background:{meta['soft']}; border:1px solid {meta['border']}; border-radius:14px;">
+                  <tr><td style="padding:14px 12px; text-align:center;">
+                    <div style="font-size:22px; line-height:24px;">{meta['icon']}</div>
+                    <div style="font-size:22px; font-weight:800; color:#111827; line-height:28px; margin-top:4px;">{adet}</div>
+                    <div style="font-size:11px; font-weight:700; color:{meta['color']}; letter-spacing:.04em; text-transform:uppercase; margin-top:2px;">{meta['title']}</div>
+                  </td></tr>
+                </table>
+              </td>"""
+        return cells
+
     html_body = f"""
 <!doctype html>
 <html>
-  <body style="margin:0; padding:0; background:#f3f4f6; font-family:Arial, Helvetica, sans-serif; color:#111827;">
-    <div style="max-width:860px; margin:0 auto; padding:24px;">
-      <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:18px; overflow:hidden; box-shadow:0 8px 24px rgba(15,23,42,0.06);">
-        <div style="padding:28px 30px; background:#111827; color:#ffffff;">
-          <div style="font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:#cbd5e1;">PAX Retail Signal</div>
-          <h1 style="margin:8px 0 6px 0; font-size:28px; line-height:1.25;">Günlük Intel Raporu</h1>
-          <div style="font-size:14px; color:#e5e7eb;">{esc(tarih)}</div>
-        </div>
-
-        <div style="padding:24px 30px;">
-          <h2 style="margin:0 0 14px 0; font-size:20px; color:#111827;">Executive Summary</h2>
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; margin-bottom:22px;">
-            <tr>
-              <td style="width:33%; padding:14px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:12px;">
-                <div style="font-size:12px; color:#6b7280;">Toplam yeni gelişme</div>
-                <div style="font-size:26px; font-weight:700; color:#111827;">{toplam_yeni}</div>
-              </td>
-              <td style="width:2%;"></td>
-              <td style="width:33%; padding:14px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:12px;">
-                <div style="font-size:12px; color:#6b7280;">Mailde gösterilen</div>
-                <div style="font-size:26px; font-weight:700; color:#111827;">{toplam_gosterilen}</div>
-              </td>
-              <td style="width:2%;"></td>
-              <td style="width:30%; padding:14px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:12px;">
-                <div style="font-size:12px; color:#6b7280;">En aktif alan</div>
-                <div style="font-size:18px; font-weight:700; color:#111827;">{esc(en_aktif if en_aktif else "Yok")}</div>
-              </td>
-            </tr>
-          </table>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body style="margin:0; padding:0; background:#eef2f7; font-family:Arial, Helvetica, sans-serif; color:#111827;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; background:#eef2f7;">
+      <tr><td align="center" style="padding:28px 12px;">
+        <table role="presentation" width="760" cellpadding="0" cellspacing="0" style="width:760px; max-width:100%; border-collapse:separate; border-spacing:0; background:#ffffff; border-radius:22px; overflow:hidden; border:1px solid #dbe3ef; box-shadow:0 10px 30px rgba(15,23,42,0.10);">
+          <tr><td style="padding:0; background:#0f172a;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+              <tr>
+                <td style="padding:30px 32px;">
+                  <div style="display:inline-block; padding:6px 10px; border:1px solid rgba(255,255,255,.24); border-radius:999px; color:#cbd5e1; font-size:12px; letter-spacing:.08em; text-transform:uppercase;">PAX Retail Signal</div>
+                  <div style="font-size:32px; line-height:38px; font-weight:800; color:#ffffff; margin-top:14px;">Günlük Intel Raporu</div>
+                  <div style="font-size:14px; color:#cbd5e1; margin-top:8px;">{esc(tarih)} · Otomatik pazar takip çıktısı</div>
+                </td>
+                <td align="right" style="padding:30px 32px; vertical-align:top; width:170px;">
+                  <div style="display:inline-block; background:#22c55e; color:#052e16; font-weight:800; border-radius:14px; padding:10px 14px; font-size:13px;">ENGINE RUN OK</div>
+                </td>
+              </tr>
+            </table>
+          </td></tr>
+          <tr><td style="padding:26px 30px 8px 30px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="padding:18px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:18px;">
+              <div style="font-size:12px; color:#64748b; font-weight:700; letter-spacing:.06em; text-transform:uppercase;">Executive Summary</div>
+              <div style="font-size:16px; line-height:24px; color:#334155; margin-top:8px;">Bu çalıştırmada <b>{toplam_yeni}</b> yeni gelişme bulundu. Mailde okunabilirlik için <b>{toplam_gosterilen}</b> kayıt gösteriliyor. En aktif alan: <b>{esc(en_aktif if en_aktif else "Yok")}</b>.</div>
+            </td></tr></table>
+          </td></tr>
+          <tr><td style="padding:10px 24px 18px 24px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate; border-spacing:0;"><tr>
+              <td style="width:33.33%; padding:6px; vertical-align:top;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#111827; border-radius:16px;"><tr><td style="padding:18px; text-align:center;"><div style="font-size:12px; color:#cbd5e1; font-weight:700; text-transform:uppercase;">Toplam Yeni</div><div style="font-size:34px; line-height:40px; color:#ffffff; font-weight:900; margin-top:4px;">{toplam_yeni}</div></td></tr></table></td>
+              <td style="width:33.33%; padding:6px; vertical-align:top;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:16px;"><tr><td style="padding:18px; text-align:center;"><div style="font-size:12px; color:#64748b; font-weight:700; text-transform:uppercase;">Mailde Gösterilen</div><div style="font-size:34px; line-height:40px; color:#111827; font-weight:900; margin-top:4px;">{toplam_gosterilen}</div></td></tr></table></td>
+              <td style="width:33.33%; padding:6px; vertical-align:top;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:16px;"><tr><td style="padding:18px; text-align:center;"><div style="font-size:12px; color:#64748b; font-weight:700; text-transform:uppercase;">Limit</div><div style="font-size:34px; line-height:40px; color:#111827; font-weight:900; margin-top:4px;">{gosterilen_limit or toplam_gosterilen}</div></td></tr></table></td>
+            </tr></table>
+          </td></tr>
+          <tr><td style="padding:0 24px 22px 24px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>{kategori_sayim_html()}</tr></table></td></tr>
 """
 
     if toplam_gosterilen == 0:
         html_body += """
-          <div style="padding:18px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:14px; color:#374151;">
-            Bugün anlamlı bir gelişme tespit edilmedi. Sistem kontrol amaçlı çalıştı.
-          </div>
+          <tr><td style="padding:0 30px 30px 30px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:18px;"><tr><td style="padding:24px; text-align:center; color:#334155; font-size:16px; line-height:24px;">Bugün anlamlı bir gelişme tespit edilmedi. Sistem kontrol amaçlı çalıştı.</td></tr></table></td></tr>
 """
     else:
         if toplam_yeni > toplam_gosterilen:
             html_body += f"""
-          <div style="padding:14px 16px; background:#fff7ed; border:1px solid #fed7aa; border-radius:12px; color:#9a3412; margin-bottom:20px;">
-            Bu çalıştırmada toplam <b>{toplam_yeni}</b> yeni haber bulundu. Mailde ilk <b>{toplam_gosterilen}</b> kayıt gösteriliyor.
-          </div>
+          <tr><td style="padding:0 30px 22px 30px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fff7ed; border:1px solid #fed7aa; border-radius:16px;"><tr><td style="padding:14px 16px; color:#9a3412; font-size:14px; line-height:21px;"><b>Not:</b> Toplam <b>{toplam_yeni}</b> yeni haber bulundu. Mail okunabilirliği için ilk <b>{toplam_gosterilen}</b> kayıt gösteriliyor.</td></tr></table></td></tr>
 """
-
         for key, meta in sections.items():
             items = results.get(key, [])
             if not items:
                 continue
-
             html_body += f"""
-          <div style="margin-top:26px;">
-            <div style="display:block; padding:14px 16px; background:{meta['bg']}; border-left:6px solid {meta['color']}; border-radius:12px; margin-bottom:12px;">
-              <span style="font-size:22px; vertical-align:middle;">{meta['icon']}</span>
-              <span style="font-size:21px; font-weight:800; color:#111827; margin-left:8px;">{meta['title']}</span>
-              <span style="font-size:14px; color:#6b7280; margin-left:8px;">({len(items)} haber)</span>
-            </div>
+          <tr><td style="padding:0 30px 26px 30px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate; border-spacing:0; background:{meta['soft']}; border:1px solid {meta['border']}; border-radius:20px; overflow:hidden;">
+              <tr><td style="padding:18px 20px; border-bottom:1px solid {meta['border']};">
+                <div style="font-size:22px; font-weight:900; color:#111827; line-height:28px;"><span style="font-size:24px;">{meta['icon']}</span> {meta['title']} <span style="font-size:14px; font-weight:700; color:{meta['color']};">· {len(items)} haber</span></div>
+                <div style="font-size:13px; color:#64748b; margin-top:4px;">{meta['note']}</div>
+              </td></tr>
 """
-
             for idx, r in enumerate(items, 1):
                 firma = esc(r.get("isim"))
                 sektor = esc(r.get("sektor"))
                 baslik = esc(r.get("baslik"))
                 kaynak = esc(r.get("kaynak"))
                 link = esc(r.get("link"))
-                sektor_html = f"<span style='color:#6b7280;'> — {sektor}</span>" if sektor else ""
-                link_html = f"<a href=\"{link}\" target=\"_blank\" style=\"display:inline-block; margin-top:10px; color:#2563eb; text-decoration:none; font-weight:700;\">Haberi aç →</a>" if link else ""
-
+                sektor_row = f'<span style="color:#64748b; font-weight:600;">{sektor}</span>' if sektor else '<span style="color:#94a3b8;">Sektör yok</span>'
+                link_button = f'<a href="{link}" target="_blank" style="background:{meta["color"]}; color:#ffffff; display:inline-block; padding:10px 14px; border-radius:12px; font-size:13px; font-weight:800; text-decoration:none;">Haberi Aç →</a>' if link else '<span style="font-size:13px; color:#94a3b8;">Link yok</span>'
                 html_body += f"""
-            <div style="padding:16px 18px; border:1px solid #e5e7eb; border-radius:14px; margin-bottom:12px; background:#ffffff;">
-              <div style="font-size:13px; color:#6b7280; margin-bottom:6px;">#{idx} · {kaynak}</div>
-              <div style="font-size:17px; font-weight:800; color:#111827; margin-bottom:8px;">{firma}{sektor_html}</div>
-              <div style="font-size:15px; line-height:1.5; color:#374151;">{baslik}</div>
-              {link_html}
-            </div>
+              <tr><td style="padding:0 14px 14px 14px;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate; border-spacing:0; background:#ffffff; border:1px solid #e2e8f0; border-radius:16px;">
+                  <tr><td style="padding:16px 18px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+                      <td style="vertical-align:top; width:54px;"><div style="width:40px; height:40px; border-radius:12px; background:{meta['soft']}; border:1px solid {meta['border']}; text-align:center; line-height:40px; font-weight:900; color:{meta['color']}; font-size:14px;">#{idx}</div></td>
+                      <td style="vertical-align:top; padding-left:4px;">
+                        <div style="font-size:12px; color:#64748b; font-weight:700; letter-spacing:.03em; text-transform:uppercase;">{kaynak} · {esc(meta['title'])}</div>
+                        <div style="font-size:18px; line-height:24px; color:#0f172a; font-weight:900; margin-top:5px;">{firma}</div>
+                        <div style="font-size:13px; line-height:20px; margin-top:2px;">{sektor_row}</div>
+                        <div style="font-size:15px; line-height:23px; color:#334155; margin-top:10px;">{baslik}</div>
+                        <div style="margin-top:14px;">{link_button}</div>
+                      </td>
+                    </tr></table>
+                  </td></tr>
+                </table>
+              </td></tr>
+"""
+            html_body += """
+            </table>
+          </td></tr>
 """
 
-            html_body += "          </div>\n"
-
     html_body += """
-          <div style="margin-top:28px; padding-top:16px; border-top:1px solid #e5e7eb; font-size:12px; color:#6b7280;">
-            Bu rapor PAX Retail Intelligence Engine tarafından otomatik oluşturulmuştur.
-          </div>
-        </div>
-      </div>
-    </div>
+          <tr><td style="padding:0 30px 30px 30px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:16px;"><tr><td style="padding:16px 18px; font-size:12px; line-height:18px; color:#64748b; text-align:center;">Bu rapor <b>PAX Retail Intelligence Engine</b> tarafından otomatik oluşturulmuştur.<br>Daha iyi görünüm için mail istemcisinde HTML görüntüleme açık olmalıdır.</td></tr></table></td></tr>
+        </table>
+      </td></tr>
+    </table>
   </body>
 </html>
 """
     return html_body
-
 
 def send_mail(subject, body_html):
     mail_user = os.environ.get("MAIL_USER")
