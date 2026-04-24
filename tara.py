@@ -4,6 +4,7 @@ PAX Retail Signal Engine V2 — Sektörlü takip listesi
 - takip_listesi.json: kategori + isim + sektör okur.
 - kaynak_listesi.json: RSS/Web kaynaklarını okur.
 - GitHub Issue açar.
+- Issue içine 4 katmanlı mail formatı ekler.
 - gorulen_haberler.json ile aynı haberi tekrar bildirmez.
 """
 
@@ -89,6 +90,7 @@ def text_from_element(el):
 def rss_tara(kaynak):
     isim = kaynak.get("isim", "Bilinmeyen")
     rss_url = (kaynak.get("rss") or "").strip()
+
     if not rss_url:
         return [], "RSS yok"
 
@@ -101,10 +103,17 @@ def rss_tara(kaynak):
             title = text_from_element(item.find("title"))
             link = text_from_element(item.find("link"))
             desc = text_from_element(item.find("description"))
+
             if title and link:
-                haberler.append({"kaynak": isim, "baslik": title, "link": link, "ozet": desc})
+                haberler.append({
+                    "kaynak": isim,
+                    "baslik": title,
+                    "link": link,
+                    "ozet": desc
+                })
 
         ns = {"atom": "http://www.w3.org/2005/Atom"}
+
         for entry in root.findall(".//atom:entry", ns):
             title_el = entry.find("atom:title", ns)
             link_el = entry.find("atom:link", ns)
@@ -115,9 +124,15 @@ def rss_tara(kaynak):
             desc = text_from_element(summary_el)
 
             if title and link:
-                haberler.append({"kaynak": isim, "baslik": title, "link": link, "ozet": desc})
+                haberler.append({
+                    "kaynak": isim,
+                    "baslik": title,
+                    "link": link,
+                    "ozet": desc
+                })
 
         return haberler, None
+
     except Exception as e:
         return [], str(e)
 
@@ -125,6 +140,7 @@ def rss_tara(kaynak):
 def web_tara(kaynak):
     isim = kaynak.get("isim", "Bilinmeyen")
     web_url = (kaynak.get("web") or "").strip()
+
     if not web_url:
         return [], "Web URL yok"
 
@@ -133,39 +149,56 @@ def web_tara(kaynak):
         text = raw.decode("utf-8", errors="ignore")
         base = f"{urlparse(web_url).scheme}://{urlparse(web_url).netloc}"
 
-        pattern = re.compile(r'<a\s+[^>]*href=["\']([^"\']+)["\'][^>]*>(.*?)</a>', re.I | re.S)
+        pattern = re.compile(
+            r'<a\s+[^>]*href=["\']([^"\']+)["\'][^>]*>(.*?)</a>',
+            re.I | re.S
+        )
+
         haberler = []
         seen = set()
 
         for href, inner in pattern.findall(text):
             title = re.sub(r"<[^>]+>", " ", inner)
             title = html.unescape(re.sub(r"\s+", " ", title)).strip()
+
             if len(title) < 15:
                 continue
 
             link = urljoin(base, href.strip())
             key = normalize(link + title)
+
             if key in seen:
                 continue
+
             seen.add(key)
 
-            haberler.append({"kaynak": isim, "baslik": title, "link": link, "ozet": ""})
+            haberler.append({
+                "kaynak": isim,
+                "baslik": title,
+                "link": link,
+                "ozet": ""
+            })
 
         return haberler, None
+
     except Exception as e:
         return [], str(e)
 
 
 def kaynak_tara(kaynak):
     isim = kaynak.get("isim", "Bilinmeyen")
+
     if (kaynak.get("rss") or "").strip():
         haberler, hata = rss_tara(kaynak)
+
         if haberler:
             print(f"✅ {isim}: RSS ile {len(haberler)} haber")
             return haberler, None, "rss"
+
         print(f"⚠️ {isim}: RSS başarısız/boş: {hata}")
 
     haberler, hata = web_tara(kaynak)
+
     if haberler:
         print(f"✅ {isim}: Web ile {len(haberler)} link")
         return haberler, None, "web"
@@ -224,7 +257,10 @@ def haberleri_eslestir(haberler, takip_listesi):
     eslesen = []
 
     for haber in haberler:
-        combined = normalize((haber.get("baslik") or "") + " " + (haber.get("ozet") or ""))
+        combined = normalize(
+            (haber.get("baslik") or "") + " " + (haber.get("ozet") or "")
+        )
+
         for item in takip_items:
             if eslesme_var_mi(combined, item["firma_norm"], item["hassas"]):
                 h = haber.copy()
@@ -237,10 +273,77 @@ def haberleri_eslestir(haberler, takip_listesi):
     return eslesen
 
 
-def issue_body_olustur(yeni_haberler, tum_haber_sayisi, toplam_eslesen, sorunlu_kaynaklar, takip_listesi, kaynak_listesi):
+def format_mail(results):
+    mail = "PAX Retail Signal | Günlük Intel Raporu\n\n"
+
+    sections = {
+        "Müşteriler": "🟢 MÜŞTERİLER",
+        "KasaPOS Firmaları": "🟡 KASAPOS FİRMALARI",
+        "Rakipler": "🔴 RAKİPLER",
+        "Fintech & Bankalar": "🔵 FINTECH & BANKALAR"
+    }
+
+    toplam = 0
+
+    for key, title in sections.items():
+        kayitlar = results.get(key, [])
+        toplam += len(kayitlar)
+
+        if kayitlar:
+            mail += f"\n{title}\n\n"
+
+            for r in kayitlar:
+                sektor = f" — {r.get('sektor')}" if r.get("sektor") else ""
+                mail += f"• {r.get('isim')}{sektor}\n"
+                mail += f"  → {r.get('baslik')}\n"
+                if r.get("kaynak"):
+                    mail += f"  Kaynak: {r.get('kaynak')}\n"
+                mail += "\n"
+
+    if toplam == 0:
+        mail += "Bugün yeni haber bulunamadı. Sistem çalıştı.\n"
+
+    mail += f"\nToplam yeni haber: {toplam}\n"
+
+    return mail
+
+
+def mail_results_olustur(yeni_haberler):
+    results = {
+        "Müşteriler": [],
+        "KasaPOS Firmaları": [],
+        "Rakipler": [],
+        "Fintech & Bankalar": []
+    }
+
+    for h in yeni_haberler:
+        kategori = h.get("kategori")
+
+        if kategori not in results:
+            continue
+
+        results[kategori].append({
+            "isim": h.get("firma", ""),
+            "sektor": h.get("sektor", ""),
+            "baslik": h.get("baslik", ""),
+            "kaynak": h.get("kaynak", "")
+        })
+
+    return results
+
+
+def issue_body_olustur(
+    yeni_haberler,
+    tum_haber_sayisi,
+    toplam_eslesen,
+    sorunlu_kaynaklar,
+    takip_listesi,
+    kaynak_listesi
+):
     tarih = datetime.now().strftime("%d.%m.%Y %H:%M")
 
     sektor_sayim = {}
+
     for h in yeni_haberler:
         sektor = h.get("sektor") or "Sektör yok"
         sektor_sayim[sektor] = sektor_sayim.get(sektor, 0) + 1
@@ -261,46 +364,75 @@ def issue_body_olustur(yeni_haberler, tum_haber_sayisi, toplam_eslesen, sorunlu_
 
     if sektor_sayim:
         body += "## Sektör Dağılımı\n\n"
+
         for sektor, adet in sorted(sektor_sayim.items(), key=lambda x: x[1], reverse=True):
             body += f"- **{sektor}:** {adet} haber\n"
+
         body += "\n"
 
-    kategori_sirasi = ["Müşteriler", "KasaPOS Firmaları", "Rakipler", "Fintech & Bankalar"]
+    kategori_sirasi = [
+        "Müşteriler",
+        "KasaPOS Firmaları",
+        "Rakipler",
+        "Fintech & Bankalar"
+    ]
 
     if yeni_haberler:
         body += "## Yeni Haberler\n\n"
+
         for kategori in kategori_sirasi:
             grup = [h for h in yeni_haberler if h.get("kategori") == kategori]
+
             if not grup:
                 continue
 
             body += f"### {kategori} ({len(grup)})\n\n"
+
             for h in grup:
                 sektor = f" — {h.get('sektor')}" if h.get("sektor") else ""
                 body += f"- **{h.get('firma')}**{sektor} — [{h.get('baslik')}]({h.get('link')})\n"
                 body += f"  - Kaynak: {h.get('kaynak')}\n"
+
             body += "\n"
     else:
         body += "Bugün yeni haber bulunamadı. Sistem kontrol amaçlı rapor oluşturdu.\n\n"
 
     if sorunlu_kaynaklar:
         body += "---\n\n## Sorunlu Kaynaklar\n\n"
+
         for s in sorunlu_kaynaklar:
             body += f"- **{s.get('isim')}** ({s.get('tip')}) — `{str(s.get('hata'))[:180]}`\n"
+
         body += "\n"
 
     body += "---\n\n## Takip Kapsamı\n\n"
+
     for kategori in kategori_sirasi:
         kayitlar = takip_listesi.get(kategori, [])
         body += f"- **{kategori}:** {len(kayitlar)} kayıt\n"
+
     body += f"- **Kaynak siteler:** {len(kaynak_listesi)} kayıt\n"
 
+    body += "\n---\n\n## Mail Formatı\n\n"
+    body += "```text\n"
+    body += format_mail(mail_results_olustur(yeni_haberler))
+    body += "\n```\n"
+
     body += "\n---\nBu issue GitHub Actions tarafından otomatik oluşturuldu.\n"
+
     return body
 
 
-def issue_ac(yeni_haberler, tum_haber_sayisi, toplam_eslesen, sorunlu_kaynaklar, takip_listesi, kaynak_listesi):
+def issue_ac(
+    yeni_haberler,
+    tum_haber_sayisi,
+    toplam_eslesen,
+    sorunlu_kaynaklar,
+    takip_listesi,
+    kaynak_listesi
+):
     tarih = datetime.now().strftime("%d.%m.%Y %H:%M")
+
     title = (
         f"📰 PAX Retail Signal Engine — {len(yeni_haberler)} yeni haber — {tarih}"
         if yeni_haberler
@@ -308,8 +440,12 @@ def issue_ac(yeni_haberler, tum_haber_sayisi, toplam_eslesen, sorunlu_kaynaklar,
     )
 
     body = issue_body_olustur(
-        yeni_haberler, tum_haber_sayisi, toplam_eslesen,
-        sorunlu_kaynaklar, takip_listesi, kaynak_listesi
+        yeni_haberler,
+        tum_haber_sayisi,
+        toplam_eslesen,
+        sorunlu_kaynaklar,
+        takip_listesi,
+        kaynak_listesi
     )
 
     if not GITHUB_TOKEN:
@@ -318,6 +454,7 @@ def issue_ac(yeni_haberler, tum_haber_sayisi, toplam_eslesen, sorunlu_kaynaklar,
         return
 
     api_url = f"https://api.github.com/repos/{GITHUB_REPO}/issues"
+
     payload = json.dumps({
         "title": title,
         "body": body,
@@ -349,6 +486,7 @@ def main():
 
     if not takip_listesi:
         raise RuntimeError(f"{TAKIP_DOSYA} boş veya okunamadı.")
+
     if not kaynak_listesi:
         raise RuntimeError(f"{KAYNAK_DOSYA} boş veya okunamadı.")
 
@@ -361,10 +499,15 @@ def main():
 
     for i, kaynak in enumerate(kaynak_listesi, 1):
         print(f"[{i}/{len(kaynak_listesi)}] {kaynak.get('isim')}")
+
         haberler, hata, tip = kaynak_tara(kaynak)
 
         if hata and not haberler:
-            sorunlu.append({"isim": kaynak.get("isim"), "hata": hata, "tip": tip})
+            sorunlu.append({
+                "isim": kaynak.get("isim"),
+                "hata": hata,
+                "tip": tip
+            })
 
         tum_haberler.extend(haberler)
 
@@ -378,12 +521,14 @@ def main():
     threshold = now - (GORULDU_GUN * 24 * 3600)
 
     temiz_gorulen = {}
+
     for k, v in gorulen.items():
         if isinstance(v, (int, float)) and v > threshold:
             temiz_gorulen[k] = v
 
     for h in eslesen:
         hid = haber_id(h.get("link", ""), h.get("baslik", ""))
+
         if hid not in temiz_gorulen:
             yeni.append(h)
             temiz_gorulen[hid] = now
@@ -394,7 +539,15 @@ def main():
     print("Yeni bildirilecek:", len(yeni))
     print("Sorunlu kaynak:", len(sorunlu))
 
-    issue_ac(yeni, len(tum_haberler), len(eslesen), sorunlu, takip_listesi, kaynak_listesi)
+    issue_ac(
+        yeni,
+        len(tum_haberler),
+        len(eslesen),
+        sorunlu,
+        takip_listesi,
+        kaynak_listesi
+    )
+
     json_yaz(GORULEN_DOSYA, temiz_gorulen)
 
     print("✅ Tamamlandı")
@@ -408,21 +561,3 @@ if __name__ == "__main__":
         import traceback
         traceback.print_exc()
         raise
-def format_mail(results):
-    mail = "PAX Retail Signal | Günlük Intel Raporu\n\n"
-
-    sections = {
-        "Müşteriler": "🟢 MÜŞTERİLER",
-        "KasaPOS Firmaları": "🟡 KASAPOS FİRMALARI",
-        "Rakipler": "🔴 RAKİPLER",
-        "Fintech & Bankalar": "🔵 FINTECH & BANKALAR"
-    }
-
-    for key, title in sections.items():
-        if results.get(key):
-            mail += f"\n{title}\n\n"
-            for r in results[key]:
-                mail += f"• {r['isim']} — {r['sektor']}\n"
-                mail += f"  → {r['baslik']}\n\n"
-
-    return mail
