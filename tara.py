@@ -408,3 +408,21 @@ if __name__ == "__main__":
         import traceback
         traceback.print_exc()
         raise
+def format_mail(results):
+    mail = "PAX Retail Signal | Günlük Intel Raporu\n\n"
+
+    sections = {
+        "Müşteriler": "🟢 MÜŞTERİLER",
+        "KasaPOS Firmaları": "🟡 KASAPOS FİRMALARI",
+        "Rakipler": "🔴 RAKİPLER",
+        "Fintech & Bankalar": "🔵 FINTECH & BANKALAR"
+    }
+
+    for key, title in sections.items():
+        if results.get(key):
+            mail += f"\n{title}\n\n"
+            for r in results[key]:
+                mail += f"• {r['isim']} — {r['sektor']}\n"
+                mail += f"  → {r['baslik']}\n\n"
+
+    return mail
