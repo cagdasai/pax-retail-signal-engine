@@ -273,37 +273,41 @@ def haberleri_eslestir(haberler, takip_listesi):
     return eslesen
 
 
+# (SADECE DEĞİŞEN KISIM: format_mail)
+
 def format_mail(results):
-    mail = "PAX Retail Signal | Günlük Intel Raporu\n\n"
+    toplam = sum(len(v) for v in results.values())
+    en_aktif = max(results, key=lambda k: len(results[k])) if toplam > 0 else None
+
+    mail = f"""PAX Retail Signal | Günlük Intel
+
+Toplam gelişme: {toplam}
+En aktif alan: {en_aktif if en_aktif else "Yok"}
+
+────────────────────────────
+"""
 
     sections = {
         "Müşteriler": "🟢 MÜŞTERİLER",
-        "KasaPOS Firmaları": "🟡 KASAPOS FİRMALARI",
+        "KasaPOS Firmaları": "🟡 KASA / ERP",
         "Rakipler": "🔴 RAKİPLER",
-        "Fintech & Bankalar": "🔵 FINTECH & BANKALAR"
+        "Fintech & Bankalar": "🔵 FINTECH / BANKA"
     }
 
-    toplam = 0
-
     for key, title in sections.items():
-        kayitlar = results.get(key, [])
-        toplam += len(kayitlar)
-
-        if kayitlar:
+        if results.get(key):
             mail += f"\n{title}\n\n"
 
-            for r in kayitlar:
+            for r in results[key]:
                 sektor = f" — {r.get('sektor')}" if r.get("sektor") else ""
                 mail += f"• {r.get('isim')}{sektor}\n"
                 mail += f"  → {r.get('baslik')}\n"
-                if r.get("kaynak"):
-                    mail += f"  Kaynak: {r.get('kaynak')}\n"
-                mail += "\n"
 
     if toplam == 0:
-        mail += "Bugün yeni haber bulunamadı. Sistem çalıştı.\n"
+        mail += "\nBugün anlamlı bir gelişme tespit edilmedi.\n"
 
-    mail += f"\nToplam yeni haber: {toplam}\n"
+    mail += "\n────────────────────────────\n"
+    mail += "PAX Retail Intelligence Engine"
 
     return mail
 
