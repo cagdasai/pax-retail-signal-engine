@@ -32,6 +32,11 @@ GORULEN_DOSYA = "gorulen_haberler.json"
 KAYNAK_ARASI_BEKLEME = 1
 GORULDU_GUN = 30
 
+# İlk çalıştırma/reset durumunda çok fazla haber çıkarsa GitHub Issue ve mail şişmesin.
+# Normal günlük kullanımda zaten sadece yeni haberler geleceği için bu limite çoğu zaman takılmaz.
+ISSUE_LIMIT = int(os.environ.get("ISSUE_LIMIT", "50"))
+MAIL_LIMIT = int(os.environ.get("MAIL_LIMIT", "50"))
+
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
                   "(KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
@@ -375,9 +380,11 @@ def issue_body_olustur(
     toplam_eslesen,
     sorunlu_kaynaklar,
     takip_listesi,
-    kaynak_listesi
+    kaynak_listesi,
+    toplam_yeni_haber=None
 ):
     tarih = datetime.now().strftime("%d.%m.%Y %H:%M")
+    toplam_yeni = toplam_yeni_haber if toplam_yeni_haber is not None else len(yeni_haberler)
 
     sektor_sayim = {}
 
@@ -394,10 +401,13 @@ def issue_body_olustur(
 - Taranan kaynak sayısı: {len(kaynak_listesi)}
 - Taranan haber/link sayısı: {tum_haber_sayisi}
 - Firma eşleşen toplam haber: {toplam_eslesen}
-- Yeni bildirilecek haber: {len(yeni_haberler)}
+- Yeni bildirilecek haber: {toplam_yeni}
 - Sorunlu kaynak: {len(sorunlu_kaynaklar)}
 
 """
+
+    if toplam_yeni > len(yeni_haberler):
+        body += f"- Raporda gösterilen haber: {len(yeni_haberler)} / {toplam_yeni} (limit: {len(yeni_haberler)})\n\n"
 
     if sektor_sayim:
         body += "## Sektör Dağılımı\n\n"
@@ -466,7 +476,8 @@ def issue_ac(
     toplam_eslesen,
     sorunlu_kaynaklar,
     takip_listesi,
-    kaynak_listesi
+    kaynak_listesi,
+    toplam_yeni_haber=None
 ):
     tarih = datetime.now().strftime("%d.%m.%Y %H:%M")
 
@@ -482,7 +493,8 @@ def issue_ac(
         toplam_eslesen,
         sorunlu_kaynaklar,
         takip_listesi,
-        kaynak_listesi
+        kaynak_listesi,
+        toplam_yeni_haber=toplam_yeni_haber
     )
 
     if not GITHUB_TOKEN:
@@ -576,16 +588,32 @@ def main():
     print("Yeni bildirilecek:", len(yeni))
     print("Sorunlu kaynak:", len(sorunlu))
 
-    issue_ac(
-        yeni,
-        len(tum_haberler),
-        len(eslesen),
-        sorunlu,
-        takip_listesi,
-        kaynak_listesi
-    )
+    yeni_issue = yeni[:ISSUE_LIMIT]
+    yeni_mail = yeni[:MAIL_LIMIT]
 
-    mail_body = format_mail(mail_results_olustur(yeni))
+    try:
+        issue_ac(
+            yeni_issue,
+            len(tum_haberler),
+            len(eslesen),
+            sorunlu,
+            takip_listesi,
+            kaynak_listesi,
+            toplam_yeni_haber=len(yeni)
+        )
+    except Exception as e:
+        print("⚠️ Issue açılamadı, mail gönderimine devam ediliyor:", str(e))
+
+    mail_body = format_mail(mail_results_olustur(yeni_mail))
+
+    if len(yeni) > len(yeni_mail):
+        mail_body += (
+            "\n\nNot: Bu çalıştırmada toplam "
+            + str(len(yeni))
+            + " yeni haber bulundu. Mailde ilk "
+            + str(len(yeni_mail))
+            + " kayıt gösterildi."
+        )
     send_mail(
         "PAX Retail Signal | Günlük Intel Raporu",
         mail_body
