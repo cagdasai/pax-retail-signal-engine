@@ -2,96 +2,291 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>PAX Signal Admin</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PAX Retail Signal Engine V2 - Admin Panel</title>
 <style>
-body{font-family:Arial;background:#0f172a;color:white;padding:20px}
-.card{background:#1e293b;padding:15px;border-radius:12px;margin-bottom:20px}
-input,select{padding:8px;margin:5px}
-button{padding:8px;margin:5px;cursor:pointer}
-ul{list-style:none;padding:0}
-li{margin:5px 0;background:#334155;padding:6px;border-radius:6px}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial, sans-serif;background:#0f172a;color:#111827;padding:24px}
+.app{max-width:1400px;margin:0 auto}
+.hero{background:linear-gradient(135deg,#1e293b,#020617);color:white;border-radius:24px;padding:26px;margin-bottom:18px;box-shadow:0 20px 60px rgba(0,0,0,.28)}
+.hero h1{margin:0 0 8px;font-size:30px}
+.hero p{margin:0;color:#cbd5e1;line-height:1.5}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:18px}
+.stat{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:14px}
+.stat span{display:block;color:#cbd5e1;font-size:12px}
+.stat strong{display:block;color:white;font-size:25px;margin-top:5px}
+.tabs,.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+button{border:0;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer;background:#111827;color:white}
+button:hover{opacity:.9}
+.tab{background:white;color:#111827}
+.tab.active{background:#2563eb;color:white}
+.btn-blue{background:#2563eb}
+.btn-green{background:#16a34a}
+.btn-red{background:#dc2626}
+.btn-light{background:white;color:#111827;border:1px solid #e5e7eb}
+.section{display:none}
+.section.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.card{background:white;border-radius:22px;padding:18px;margin-bottom:16px;box-shadow:0 16px 40px rgba(0,0,0,.18)}
+.card-header{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}
+.card h2{margin:0;font-size:19px}
+.badge{background:#eef2ff;color:#3730a3;border-radius:999px;padding:7px 10px;font-weight:800;font-size:12px}
+.row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-bottom:10px;align-items:end}
+.source-row{display:grid;grid-template-columns:1fr 1.4fr 1.4fr auto;gap:8px;margin-bottom:10px;align-items:end}
+label{font-size:12px;color:#64748b;font-weight:700;display:block;margin-bottom:5px}
+input,select,textarea{width:100%;border:1px solid #e5e7eb;border-radius:12px;padding:10px;font-size:14px}
+.search{background:#f8fafc;margin-bottom:10px}
+.list{display:flex;flex-wrap:wrap;gap:8px;max-height:360px;overflow:auto;padding:4px}
+.chip{background:#f8fafc;border:1px solid #e5e7eb;border-radius:999px;padding:8px 10px;font-size:13px;display:flex;gap:8px;align-items:center;max-width:100%}
+.chip span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:360px}
+.chip small{color:#64748b}
+.chip button{background:#fee2e2;color:#991b1b;border-radius:999px;width:22px;height:22px;padding:0;line-height:22px}
+table{width:100%;border-collapse:collapse;background:white;border-radius:16px;overflow:hidden}
+th,td{border-bottom:1px solid #e5e7eb;padding:11px;text-align:left;font-size:13px;vertical-align:top}
+th{background:#f8fafc;color:#334155;font-size:12px;text-transform:uppercase}
+td a{color:#2563eb;word-break:break-all}
+textarea{height:340px;background:#020617;color:#d1fae5;font-family:Consolas,monospace}
+.note{background:#fef3c7;color:#92400e;border-radius:14px;padding:12px;font-size:13px;line-height:1.5;margin-top:10px}
+@media(max-width:1000px){.stats,.grid,.row,.source-row{grid-template-columns:1fr}body{padding:14px}}
 </style>
 </head>
 <body>
+<div class="app">
+  <div class="hero">
+    <h1>PAX Retail Signal Engine V2</h1>
+    <p>Mevcut 296 firma + sektör listesi ve mevcut 19 kaynak site bu panelin içine gömülü. Chrome’da direkt aç, ekle/çıkar, sonra JSON çıktısını GitHub’daki dosyaya koy.</p>
+    <div class="stats">
+      <div class="stat"><span>Müşteriler</span><strong id="statMusteri">0</strong></div>
+      <div class="stat"><span>KasaPOS</span><strong id="statKasa">0</strong></div>
+      <div class="stat"><span>Rakipler</span><strong id="statRakip">0</strong></div>
+      <div class="stat"><span>Fintech & Bankalar</span><strong id="statFintech">0</strong></div>
+      <div class="stat"><span>Kaynak Siteler</span><strong id="statSource">0</strong></div>
+    </div>
+  </div>
 
-<h1>PAX Signal Admin Panel</h1>
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('targets', this)">Takip Listeleri</button>
+    <button class="tab" onclick="showTab('sources', this)">Kaynak Siteler</button>
+    <button class="tab" onclick="showTab('export', this)">JSON Çıktıları</button>
+  </div>
 
-<div class="card">
-<h2>Firma Ekle</h2>
-<input id="fname" placeholder="Firma">
-<select id="fsector">
-<option>Hazır Giyim</option>
-<option>Ev & Yaşam / Yapı Market</option>
-<option>FMCG Dağıtım Kanalları</option>
-<option>Gıda Perakendesi</option>
-<option>Elektronik & Beyaz Eşya</option>
-<option>Lojistik & Kargo</option>
-<option>Yeme-İçme</option>
-</select>
-<button onclick="addFirma()">Ekle</button>
+  <section id="targets" class="section active">
+    <div class="toolbar">
+      <button class="btn-blue" onclick="generate()">JSON Oluştur</button>
+      <button class="btn-green" onclick="copyOut('targetsOut')">Takip JSON Kopyala</button>
+      <button class="btn-light" onclick="downloadFile('takip_listesi.json','targetsOut')">takip_listesi.json İndir</button>
+      <button class="btn-red" onclick="resetAll()">Varsayılan Listeye Dön</button>
+    </div>
+    <div class="grid" id="targetCards"></div>
+  </section>
 
-<ul id="firmaList"></ul>
+  <section id="sources" class="section">
+    <div class="toolbar">
+      <button class="btn-blue" onclick="generate()">JSON Oluştur</button>
+      <button class="btn-green" onclick="copyOut('sourcesOut')">Kaynak JSON Kopyala</button>
+      <button class="btn-light" onclick="downloadFile('kaynak_listesi.json','sourcesOut')">kaynak_listesi.json İndir</button>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h2>Kaynak Site Yönetimi</h2>
+        <span class="badge" id="sourceBadge">0 kaynak</span>
+      </div>
+      <div class="source-row">
+        <div><label>Kaynak Adı</label><input id="sName" placeholder="Örn: Webrazzi"></div>
+        <div><label>RSS URL</label><input id="sRss" placeholder="https://site.com/feed/"></div>
+        <div><label>Web URL</label><input id="sWeb" placeholder="https://site.com/"></div>
+        <button onclick="addSource()">Ekle</button>
+      </div>
+      <input class="search" id="sourceSearch" placeholder="Kaynak ara..." oninput="renderSources()">
+      <table>
+        <thead><tr><th>Kaynak</th><th>RSS</th><th>Web</th><th>İşlem</th></tr></thead>
+        <tbody id="sourceTable"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="export" class="section">
+    <div class="card">
+      <h2>takip_listesi.json</h2>
+      <textarea id="targetsOut"></textarea>
+    </div>
+    <div class="card">
+      <h2>kaynak_listesi.json</h2>
+      <textarea id="sourcesOut"></textarea>
+      <div class="note">Bunları ilgili GitHub dosyalarının içine koyup commit edince sistem yeni listeyle çalışır.</div>
+    </div>
+  </section>
 </div>
-
-<div class="card">
-<h2>Kaynak Site Ekle</h2>
-<input id="sname" placeholder="Site adı">
-<input id="srss" placeholder="RSS URL">
-<input id="sweb" placeholder="Web URL">
-<button onclick="addSource()">Ekle</button>
-
-<ul id="sourceList"></ul>
-</div>
-
-<button onclick="exportJSON()">JSON Oluştur</button>
-
-<textarea id="out" style="width:100%;height:300px"></textarea>
 
 <script>
-let firmalar=[];
-let kaynaklar=[];
+const DEFAULT_TARGETS = {"Müşteriler": [{"isim": "AVVA", "sektor": "Hazır Giyim"}, {"isim": "BENETTON", "sektor": "Hazır Giyim"}, {"isim": "BJK", "sektor": "Hazır Giyim"}, {"isim": "CHAKRA", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "DUFY", "sektor": "Hazır Giyim"}, {"isim": "FLORMAR", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "KAYRA (SARAH KONFEKSİYON)", "sektor": "Hazır Giyim"}, {"isim": "MADAME COCO", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "ROMAN", "sektor": "Hazır Giyim"}, {"isim": "BALPARMAK", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "BAUHAUS", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "FLO", "sektor": "Hazır Giyim"}, {"isim": "FİBA RETAIL (M&S)", "sektor": "Hazır Giyim"}, {"isim": "KOTON", "sektor": "Hazır Giyim"}, {"isim": "KOÇTAŞ", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "LCW", "sektor": "Hazır Giyim"}, {"isim": "MANGO", "sektor": "Hazır Giyim"}, {"isim": "ONUR MARKET", "sektor": "Gıda Perakendesi"}, {"isim": "PAŞABAHÇE MAĞAZALARI", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "SEYHANLAR MARKET", "sektor": "Gıda Perakendesi"}, {"isim": "TEKNOSA", "sektor": "Elektronik & Beyaz Eşya"}, {"isim": "TEKZEN", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "WATSONS", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "ÇETİNKAYA", "sektor": "Hazır Giyim"}, {"isim": "ÖZDİLEK", "sektor": "Gıda Perakendesi"}, {"isim": "AKER", "sektor": "Hazır Giyim"}, {"isim": "ANPA GROSS", "sektor": "Gıda Perakendesi"}, {"isim": "ANTEPHAN KÜNEFE", "sektor": "Gıda Perakendesi"}, {"isim": "BBM PERAKENDE (BOLDY)", "sektor": "Gıda Perakendesi"}, {"isim": "ESSILOR LUXOTTICA", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "GOLDEN ROSE", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "GROSPER", "sektor": "Gıda Perakendesi"}, {"isim": "GİZİA", "sektor": "Hazır Giyim"}, {"isim": "HATEMOĞLU", "sektor": "Hazır Giyim"}, {"isim": "SNOWY ULYU KARDEŞLER", "sektor": "Gıda Perakendesi"}, {"isim": "TATLIBAK", "sektor": "Gıda Perakendesi"}, {"isim": "TEDİ DISCOUNT TEKSTİL MAĞAZACILIK A.Ş.", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "TERGAN", "sektor": "Hazır Giyim"}, {"isim": "ALPET PETROL", "sektor": "Gıda Perakendesi"}, {"isim": "ANTEPLİOĞLU", "sektor": "Gıda Perakendesi"}, {"isim": "ARDEN MARKET", "sektor": "Gıda Perakendesi"}, {"isim": "AYPA MARKET", "sektor": "Gıda Perakendesi"}, {"isim": "BİÇEN MARKET", "sektor": "Gıda Perakendesi"}, {"isim": "DHL KARGO (MNG)", "sektor": "Lojistik & Kargo"}, {"isim": "HALKTAN KURUYEMİŞ", "sektor": "Yeme-İçme"}, {"isim": "HAPPY CENTER", "sektor": "Gıda Perakendesi"}, {"isim": "ONUR HİPERMARKETLERİ", "sektor": "Gıda Perakendesi"}, {"isim": "SEPHORA", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "Showmar Hipermarketleri", "sektor": "Gıda Perakendesi"}, {"isim": "ÇAĞRI MARKET", "sektor": "Gıda Perakendesi"}, {"isim": "ÜLKER", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Ülker distribütörleri", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "ALTUN MARKET", "sektor": "Gıda Perakendesi"}, {"isim": "E-BEBEK", "sektor": "Hazır Giyim"}, {"isim": "A101", "sektor": "Gıda Perakendesi"}, {"isim": "ADİL IŞIK", "sektor": "Hazır Giyim"}, {"isim": "ALTINYILDIZ", "sektor": "Hazır Giyim"}, {"isim": "BOYNER", "sektor": "Hazır Giyim"}, {"isim": "BİSSE", "sektor": "Hazır Giyim"}, {"isim": "COLINS", "sektor": "Hazır Giyim"}, {"isim": "DAGİ", "sektor": "Hazır Giyim"}, {"isim": "ELLE", "sektor": "Hazır Giyim"}, {"isim": "ENDER MAĞAZALARI", "sektor": "Hazır Giyim"}, {"isim": "GALATASARAY MAĞAZACILIK", "sektor": "Hazır Giyim"}, {"isim": "GUSTO", "sektor": "Hazır Giyim"}, {"isim": "L'OCCİTANE", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "LEE COOPER", "sektor": "Hazır Giyim"}, {"isim": "LESCON", "sektor": "Hazır Giyim"}, {"isim": "LUFİAN", "sektor": "Hazır Giyim"}, {"isim": "METRO MARKET", "sektor": "Gıda Perakendesi"}, {"isim": "MUDO", "sektor": "Hazır Giyim"}, {"isim": "PAŞA FIRINI", "sektor": "Yeme-İçme"}, {"isim": "SPX", "sektor": "Hazır Giyim"}, {"isim": "SÜVARİ", "sektor": "Hazır Giyim"}, {"isim": "TWIGY", "sektor": "Hazır Giyim"}, {"isim": "UKİ", "sektor": "Hazır Giyim"}, {"isim": "YVES ROCHER", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "İMZA", "sektor": "Hazır Giyim"}, {"isim": "DAMAT", "sektor": "Hazır Giyim"}, {"isim": "ETİ", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "GREYDER", "sektor": "Hazır Giyim"}, {"isim": "KARACA ZÜCCACİYE", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "NIKE SPORTINN", "sektor": "Hazır Giyim"}, {"isim": "Ramsey Kip Mağazacılık", "sektor": "Hazır Giyim"}, {"isim": "SKECHERS", "sektor": "Hazır Giyim"}, {"isim": "YURTİÇİ KARGO", "sektor": "Lojistik & Kargo"}, {"isim": "BG STORE", "sektor": "Hazır Giyim"}, {"isim": "BLUEMİNT", "sektor": "Hazır Giyim"}, {"isim": "BİZİM TOPTAN", "sektor": "Gıda Perakendesi"}, {"isim": "COLUMBİA", "sektor": "Hazır Giyim"}, {"isim": "D-REAM", "sektor": "Yeme-İçme"}, {"isim": "ECCO", "sektor": "Hazır Giyim"}, {"isim": "SNEAKS UP", "sektor": "Hazır Giyim"}, {"isim": "TUDORS", "sektor": "Hazır Giyim"}, {"isim": "CİVİL", "sektor": "Hazır Giyim"}, {"isim": "MAD PARFUM", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "SOFTEN KOZMETİK", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "SUWEN", "sektor": "Hazır Giyim"}, {"isim": "YARGICI", "sektor": "Hazır Giyim"}, {"isim": "BEYMEN", "sektor": "Hazır Giyim"}, {"isim": "EVKUR", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "JACK & JONES", "sektor": "Hazır Giyim"}, {"isim": "KİĞILI", "sektor": "Hazır Giyim"}, {"isim": "ÇİFT GEYİK KARACA", "sektor": "Hazır Giyim"}, {"isim": "İPEKYOL", "sektor": "Hazır Giyim"}, {"isim": "SEVİL PARFÜMERİ", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "ACK Food Solutions (Bodrum)", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "ADORE", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "AKBAL GIDA", "sektor": "Gıda Perakendesi"}, {"isim": "ALTUNBİLEKLER", "sektor": "Gıda Perakendesi"}, {"isim": "ARAS KARGO", "sektor": "Lojistik & Kargo"}, {"isim": "ARMAĞAN OYUNCAK", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "ARÇELİK SERVİSLERİ", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "AYDINLI", "sektor": "Hazır Giyim"}, {"isim": "AYTEMİZ PETROL", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Alliance Healthcare", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Alpedo", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Altıparmak", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Anadolu Efes", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Arma İlaç (Oyak)", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Arma İlaç (Veri Çekme)", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Aroma", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "BANVİT", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "BAT Türkiye", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "BELLA MAISON", "sektor": "Hazır Giyim"}, {"isim": "BELLONA", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "BEŞLER SUCUK", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "BONVENO", "sektor": "Gıda Perakendesi"}, {"isim": "BR MAĞAZACILIK", "sektor": "Hazır Giyim"}, {"isim": "Beiersdorf (Nivea)", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Beyaz eşya ve elektronik bakım ekipleri", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Beylerbeyi", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Bosch/Siemens", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Brisa", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Brown - Forman", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Bunge", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Burda Bebek", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "BİM-FİLE", "sektor": "Gıda Perakendesi"}, {"isim": "CARREFOUR", "sektor": "Gıda Perakendesi"}, {"isim": "CHANEL", "sektor": "Hazır Giyim"}, {"isim": "COŞKUN ET", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Coca Cola", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "D&R", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "DECATHLON", "sektor": "Hazır Giyim"}, {"isim": "DEFACTO", "sektor": "Hazır Giyim"}, {"isim": "DERİMOD", "sektor": "Hazır Giyim"}, {"isim": "DIVARESE", "sektor": "Hazır Giyim"}, {"isim": "DOĞTAŞ", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "Danone", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Danone Tikveşli", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Danone Waters", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Dardanel", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Deva İçecek", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Doluca", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Doğuş Çay", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Düzey", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "ENGLISH HOME", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "EREN PERAKENDE", "sektor": "Hazır Giyim"}, {"isim": "EV SHOP", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "EV-DİZ MOBİLYA", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "EVE SHOP", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "EVIDEA", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "Ecza kooperatifleri", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Eczacıbaşı", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Efe Rakı", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Efes Belarus", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Efes Pilsen - Gürcistan", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Efes Pilsen - Moldova", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Eker", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Ekol Food Service", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Entaş Gıda", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Erikli", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Eruslu Sağlık Ürünleri", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Eutobacco (Turktab)", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "FAİK SÖNMEZ", "sektor": "Hazır Giyim"}, {"isim": "GRATİS", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "GROSERİ", "sektor": "Gıda Perakendesi"}, {"isim": "Gsk", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "GÖZ GRUP", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "GİMSA", "sektor": "Gıda Perakendesi"}, {"isim": "HAKMAR", "sektor": "Gıda Perakendesi"}, {"isim": "HUMMEL", "sektor": "Hazır Giyim"}, {"isim": "Haribo", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Hayat Kimya", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Henkel", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Hepsi Jet", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Horeca Trade (İstanbul)", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Horeca İçecek Gıda Dağıtım (Edremit)", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "HİŞİM", "sektor": "Hazır Giyim"}, {"isim": "IKEA", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "Imperial Tobacco", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "JOKER", "sektor": "Hazır Giyim"}, {"isim": "Jti", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "KAHVE DÜNYASI", "sektor": "Yeme-İçme"}, {"isim": "KAYA ÇİFTLİĞİ", "sektor": "Gıda Perakendesi"}, {"isim": "KESKİNOĞLU", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "KOMPEDAN", "sektor": "Hazır Giyim"}, {"isim": "Kavaklıdere", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Kayra", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Kebir Süt", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Kent (Mondelez)", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Koza Gıda (Koza Gourmet)", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Küresel Tedarik (Anele)", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Küresel Tedarik Zinciri", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "KİM MARKET", "sektor": "Gıda Perakendesi"}, {"isim": "LES BENJAMİN", "sektor": "Hazır Giyim"}, {"isim": "LEZİTA", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "LOYA", "sektor": "Hazır Giyim"}, {"isim": "La Lorraine", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Lila Kağıt", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Loreal (Eczane Kanalı)", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Loreal (Kuaför Kanalı)", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Loreal (Tüketici Kanalı)", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "MARKAPARK", "sektor": "Hazır Giyim"}, {"isim": "MAVİ JEANS", "sektor": "Hazır Giyim"}, {"isim": "MEDIA MARKT", "sektor": "Elektronik & Beyaz Eşya"}, {"isim": "MONDİ", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "MOPAŞ", "sektor": "Gıda Perakendesi"}, {"isim": "MR. DIY", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "Mars Gıda", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Marshall", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Mey - Diageo", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Mondelez", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "MİGROS", "sektor": "Gıda Perakendesi"}, {"isim": "NAMET", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "NOCTURNE", "sektor": "Hazır Giyim"}, {"isim": "NOVASTORE", "sektor": "Hazır Giyim"}, {"isim": "Nestle - Professional", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Nestle - Retail", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Nestle Waters", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Nestlé", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Netlog Küresel Paz.", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Newal", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "OPMAR OPTİK", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "OXXO", "sektor": "Hazır Giyim"}, {"isim": "PANÇO", "sektor": "Hazır Giyim"}, {"isim": "PAULMARK", "sektor": "Hazır Giyim"}, {"isim": "PEHLİVANOĞLU", "sektor": "Gıda Perakendesi"}, {"isim": "PENTİ", "sektor": "Hazır Giyim"}, {"isim": "PEYNİRCİ BABA", "sektor": "Gıda Perakendesi"}, {"isim": "PSL - GALLERY CRYSTAL", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "PTT KARGO", "sektor": "Lojistik & Kargo"}, {"isim": "Paket Taxi", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Pepsi", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Pernod Ricard", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Philip Morris/Sabancı (Philsa – Philmar)", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Procter & Gamble", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "REEDER", "sektor": "Elektronik & Beyaz Eşya"}, {"isim": "Redbull", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Royal Canin", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "SCHAFER", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "SO CHIC", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "SUVARİ", "sektor": "Hazır Giyim"}, {"isim": "Sanipak (Eczacıbaşı)", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Satem Grup (Oyak)", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Selçuk Ecza Deposu", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Sevilen", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "SÜRAT KARGO", "sektor": "Lojistik & Kargo"}, {"isim": "SÜTAŞ", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "TALİPSAN", "sektor": "Hazır Giyim"}, {"isim": "TARIM KREDİ MARKETLERİ", "sektor": "Gıda Perakendesi"}, {"isim": "TAÇ", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "TOYPA", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "TRABZONSPOR MAĞAZACILIK", "sektor": "Hazır Giyim"}, {"isim": "Tadım", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Tchibo", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Tikveşli", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "TrendyolGo", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Turkuaz", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Türk Tuborg", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Uludağ Dubai", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Uludağ İçecek", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Unilever", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "VAKKO", "sektor": "Hazır Giyim"}, {"isim": "VATAN BİLGİSAYAR", "sektor": "Elektronik & Beyaz Eşya"}, {"isim": "Weitnauer", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "YENİ ÇAĞDAŞ", "sektor": "Gıda Perakendesi"}, {"isim": "YemekSepeti Kurye", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "test", "sektor": "Elektronik & Beyaz Eşya"}, {"isim": "ÇAK TEKSTİL LTB", "sektor": "Hazır Giyim"}, {"isim": "Çaykur", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "ÇİÇEK İÇ GİYİM", "sektor": "Hazır Giyim"}, {"isim": "ÖRNEK MARKET", "sektor": "Gıda Perakendesi"}, {"isim": "ÖZHAN MARKET", "sektor": "Gıda Perakendesi"}, {"isim": "ÖZKURUŞLAR", "sektor": "Gıda Perakendesi"}, {"isim": "ÖZLENİR GRUP", "sektor": "Hazır Giyim"}, {"isim": "Özgörkey", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "İNCİ DERİ", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "İSTİKBAL", "sektor": "Ev & Yaşam / Yapı Market"}, {"isim": "İTİMAT", "sektor": "Gıda Perakendesi"}, {"isim": "İZMAR", "sektor": "Gıda Perakendesi"}, {"isim": "ŞAHİN SUCUKLARI", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "ŞOK", "sektor": "Gıda Perakendesi"}, {"isim": "Şen Piliç", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Şölen", "sektor": "FMCG Dağıtım Kanalları"}, {"isim": "Şölen Irak", "sektor": "FMCG Dağıtım Kanalları"}], "KasaPOS Firmaları": [{"isim": "Nebim", "sektor": "KasaPOS / ERP"}, {"isim": "Logo", "sektor": "KasaPOS / ERP"}, {"isim": "Mikro", "sektor": "KasaPOS / ERP"}, {"isim": "EnPOS", "sektor": "KasaPOS / ERP"}, {"isim": "POS A.Ş.", "sektor": "KasaPOS / ERP"}, {"isim": "Toshiba", "sektor": "KasaPOS / ERP"}, {"isim": "NCR", "sektor": "KasaPOS / ERP"}, {"isim": "Menulux", "sektor": "KasaPOS / ERP"}], "Rakipler": [{"isim": "Ingenico", "sektor": "Ödeme Sistemleri"}, {"isim": "Worldline", "sektor": "Ödeme Sistemleri"}, {"isim": "Verifone", "sektor": "Ödeme Sistemleri"}, {"isim": "Hugin", "sektor": "Ödeme Sistemleri"}, {"isim": "Payten", "sektor": "Ödeme Sistemleri"}, {"isim": "Token", "sektor": "Ödeme Sistemleri"}, {"isim": "Newland", "sektor": "Ödeme Sistemleri"}, {"isim": "Sunmi", "sektor": "Ödeme Sistemleri"}], "Fintech & Bankalar": [{"isim": "Akbank", "sektor": "Bankacılık"}, {"isim": "Garanti BBVA", "sektor": "Bankacılık"}, {"isim": "Yapı Kredi", "sektor": "Bankacılık"}, {"isim": "İş Bankası", "sektor": "Bankacılık"}, {"isim": "QNB", "sektor": "Bankacılık"}, {"isim": "DenizBank", "sektor": "Bankacılık"}, {"isim": "Kuveyt Türk", "sektor": "Bankacılık"}, {"isim": "Param", "sektor": "Fintech"}, {"isim": "Ödeal", "sektor": "Fintech"}, {"isim": "iyzico", "sektor": "Fintech"}, {"isim": "PayTR", "sektor": "Fintech"}, {"isim": "Papara", "sektor": "Fintech"}]};
+const DEFAULT_SOURCES = [{"isim": "BThaber", "rss": "https://www.bthaber.com/feed/", "web": "https://bthaber.com/"}, {"isim": "Bilişim Zirvesi", "rss": "", "web": "https://www.bilisimzirvesi.com.tr/"}, {"isim": "Bi'Sektör", "rss": "https://www.bisektor.com/feed/", "web": "https://www.bisektor.com/"}, {"isim": "Bi'Sektör Retail Talks", "rss": "", "web": "https://www.bisektor.com/retail-talks-etkinlikler/"}, {"isim": "Perakende Medya Zirvesi", "rss": "", "web": "https://perakendemedyazirvesi.com/"}, {"isim": "Perakende Zirvesi", "rss": "", "web": "https://www.perakendezirvesi.com/"}, {"isim": "PSM Dergi", "rss": "https://psmdergi.com/feed/", "web": "https://psmdergi.com/"}, {"isim": "PSM Mag", "rss": "https://www.psmmag.com/feed/", "web": "https://www.psmmag.com/"}, {"isim": "PSM Awards", "rss": "", "web": "https://psmawards.com/"}, {"isim": "Smarti Awards", "rss": "", "web": "https://smartiawards.com/"}, {"isim": "Perakende.org", "rss": "https://perakende.org/feed/", "web": "https://perakende.org/"}, {"isim": "FintechTime", "rss": "https://fintechtime.com/feed/", "web": "https://fintechtime.com/"}, {"isim": "Webrazzi", "rss": "https://webrazzi.com/feed", "web": "https://webrazzi.com/"}, {"isim": "Digital Age", "rss": "https://digitalage.com.tr/feed/", "web": "https://digitalage.com.tr/"}, {"isim": "Pazarlamasyon", "rss": "https://www.pazarlamasyon.com/feed/", "web": "https://www.pazarlamasyon.com/"}, {"isim": "Marketing Türkiye", "rss": "https://www.marketingturkiye.com.tr/feed/", "web": "https://www.marketingturkiye.com.tr/"}, {"isim": "Branding Türkiye", "rss": "https://www.brandingturkiye.com/feed/", "web": "https://www.brandingturkiye.com/"}, {"isim": "IT Network", "rss": "", "web": "https://www.itnetwork.com.tr/"}, {"isim": "BT Günlüğü", "rss": "https://www.btgunlugu.com/feed/", "web": "https://www.btgunlugu.com/"}];
+const SECTORS = ["Hazır Giyim", "Ev & Yaşam / Yapı Market", "FMCG Dağıtım Kanalları", "Gıda Perakendesi", "Elektronik & Beyaz Eşya", "Lojistik & Kargo", "Yeme-İçme", "KasaPOS / ERP", "Ödeme Sistemleri", "Bankacılık", "Fintech"];
 
-function addFirma(){
-let isim=document.getElementById("fname").value;
-let sektor=document.getElementById("fsector").value;
-if(!isim) return;
-firmalar.push({isim,sektor});
-render();
+let targets = JSON.parse(localStorage.getItem("pax_targets_embedded_v2") || JSON.stringify(DEFAULT_TARGETS));
+let sources = JSON.parse(localStorage.getItem("pax_sources_embedded_v2") || JSON.stringify(DEFAULT_SOURCES));
+
+function save(){
+  localStorage.setItem("pax_targets_embedded_v2", JSON.stringify(targets));
+  localStorage.setItem("pax_sources_embedded_v2", JSON.stringify(sources));
 }
 
-function addSource(){
-let isim=document.getElementById("sname").value;
-let rss=document.getElementById("srss").value;
-let web=document.getElementById("sweb").value;
-if(!isim) return;
-kaynaklar.push({isim,rss,web});
-render();
+function showTab(id, btn){
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  btn.classList.add("active");
+  generate();
 }
 
 function render(){
-let fList=document.getElementById("firmaList");
-fList.innerHTML="";
-firmalar.forEach((f,i)=>{
-fList.innerHTML+=`<li>${f.isim} - ${f.sektor} <button onclick="delF(${i})">X</button></li>`;
-});
-
-let sList=document.getElementById("sourceList");
-sList.innerHTML="";
-kaynaklar.forEach((s,i)=>{
-sList.innerHTML+=`<li>${s.isim} <button onclick="delS(${i})">X</button></li>`;
-});
+  renderTargets();
+  renderSources();
+  updateStats();
+  generate();
 }
 
-function delF(i){firmalar.splice(i,1);render();}
-function delS(i){kaynaklar.splice(i,1);render();}
-
-function exportJSON(){
-document.getElementById("out").value=JSON.stringify({
-takip_listesi:{Müşteriler:firmalar},
-kaynak_listesi:kaynaklar
-},null,2);
+function renderTargets(){
+  const root = document.getElementById("targetCards");
+  root.innerHTML = "";
+  Object.keys(targets).forEach(cat => {
+    const safe = cat.replaceAll(" ","_").replaceAll("&","and");
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <div class="card-header">
+        <h2>${cat}</h2>
+        <span class="badge">${targets[cat].length} kayıt</span>
+      </div>
+      <div class="row">
+        <div><label>İsim</label><input id="name_${safe}" placeholder="Firma adı"></div>
+        <div><label>Sektör</label><select id="sector_${safe}">${SECTORS.map(s=>`<option value="${s}">${s}</option>`).join("")}</select></div>
+        <button onclick="addTarget('${cat}','${safe}')">Ekle</button>
+      </div>
+      <input class="search" id="search_${safe}" placeholder="Bu listede ara..." oninput="renderTargetList('${cat}','list_${safe}',this.value)">
+      <div class="list" id="list_${safe}"></div>
+    `;
+    root.appendChild(card);
+    renderTargetList(cat, "list_" + safe, "");
+  });
 }
+
+function renderTargetList(cat, id, q){
+  const el = document.getElementById(id);
+  el.innerHTML = "";
+  (targets[cat] || [])
+    .filter(x => (x.isim + " " + x.sektor).toLowerCase().includes((q||"").toLowerCase()))
+    .forEach(item => {
+      const i = targets[cat].findIndex(x => x.isim === item.isim && x.sektor === item.sektor);
+      const chip = document.createElement("div");
+      chip.className = "chip";
+      chip.innerHTML = `<span><b>${item.isim}</b> <small>— ${item.sektor || "Sektör yok"}</small></span><button onclick="delTarget('${cat}',${i})">×</button>`;
+      el.appendChild(chip);
+    });
+}
+
+function addTarget(cat, safe){
+  const name = document.getElementById("name_" + safe).value.trim();
+  const sector = document.getElementById("sector_" + safe).value;
+  if(!name) return;
+  if(targets[cat].some(x => x.isim.toLowerCase() === name.toLowerCase())) {
+    alert("Bu isim zaten var.");
+    return;
+  }
+  targets[cat].push({isim:name, sektor:sector});
+  targets[cat].sort((a,b)=>a.isim.localeCompare(b.isim,"tr"));
+  save(); render();
+}
+
+function delTarget(cat, i){
+  targets[cat].splice(i,1);
+  save(); render();
+}
+
+function renderSources(){
+  const q = (document.getElementById("sourceSearch")?.value || "").toLowerCase();
+  const tbody = document.getElementById("sourceTable");
+  tbody.innerHTML = "";
+  sources
+    .map((s,i)=>({...s,i}))
+    .filter(s => (s.isim + " " + s.rss + " " + s.web).toLowerCase().includes(q))
+    .forEach(s => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><b>${s.isim}</b></td>
+        <td>${s.rss ? `<a target="_blank" href="${s.rss}">${s.rss}</a>` : "Yok"}</td>
+        <td>${s.web ? `<a target="_blank" href="${s.web}">${s.web}</a>` : "Yok"}</td>
+        <td><button class="btn-light" onclick="editSource(${s.i})">Düzenle</button> <button class="btn-red" onclick="delSource(${s.i})">Sil</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  document.getElementById("sourceBadge").innerText = sources.length + " kaynak";
+}
+
+function addSource(){
+  const isim = document.getElementById("sName").value.trim();
+  const rss = document.getElementById("sRss").value.trim();
+  const web = document.getElementById("sWeb").value.trim();
+  if(!isim || (!rss && !web)) return alert("Kaynak adı + RSS veya Web URL gerekli.");
+  if(sources.some(x => x.isim.toLowerCase() === isim.toLowerCase())) return alert("Bu kaynak zaten var.");
+  sources.push({isim,rss,web});
+  sources.sort((a,b)=>a.isim.localeCompare(b.isim,"tr"));
+  document.getElementById("sName").value = "";
+  document.getElementById("sRss").value = "";
+  document.getElementById("sWeb").value = "";
+  save(); render();
+}
+
+function editSource(i){
+  const s = sources[i];
+  const isim = prompt("Kaynak adı:", s.isim); if(isim === null) return;
+  const rss = prompt("RSS URL:", s.rss || ""); if(rss === null) return;
+  const web = prompt("Web URL:", s.web || ""); if(web === null) return;
+  sources[i] = {isim:isim.trim(), rss:rss.trim(), web:web.trim()};
+  save(); render();
+}
+
+function delSource(i){
+  sources.splice(i,1);
+  save(); render();
+}
+
+function updateStats(){
+  document.getElementById("statMusteri").innerText = (targets["Müşteriler"] || []).length;
+  document.getElementById("statKasa").innerText = (targets["KasaPOS Firmaları"] || []).length;
+  document.getElementById("statRakip").innerText = (targets["Rakipler"] || []).length;
+  document.getElementById("statFintech").innerText = (targets["Fintech & Bankalar"] || []).length;
+  document.getElementById("statSource").innerText = sources.length;
+}
+
+function generate(){
+  document.getElementById("targetsOut").value = JSON.stringify(targets, null, 2);
+  document.getElementById("sourcesOut").value = JSON.stringify(sources, null, 2);
+}
+
+async function copyOut(id){
+  await navigator.clipboard.writeText(document.getElementById(id).value);
+  alert("Kopyalandı");
+}
+
+function downloadFile(filename, id){
+  const blob = new Blob([document.getElementById(id).value], {type:"application/json;charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+}
+
+function resetAll(){
+  if(!confirm("Panel içindeki tüm lokal değişiklikler silinsin ve gömülü mevcut listeye dönülsün mü?")) return;
+  localStorage.removeItem("pax_targets_embedded_v2");
+  localStorage.removeItem("pax_sources_embedded_v2");
+  targets = JSON.parse(JSON.stringify(DEFAULT_TARGETS));
+  sources = JSON.parse(JSON.stringify(DEFAULT_SOURCES));
+  render();
+}
+
+render();
 </script>
-
 </body>
 </html>
