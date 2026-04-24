@@ -2,156 +2,73 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>PAX Retail Signal Engine V2</title>
+<title>PAX Signal Panel</title>
 <style>
-body{margin:0;font-family:Arial,sans-serif;background:#0f172a;color:#111827;padding:24px}
-.app{max-width:1280px;margin:auto}
-.hero{background:linear-gradient(135deg,#1e293b,#111827);color:white;border-radius:24px;padding:26px;margin-bottom:18px}
-.hero h1{margin:0 0 8px;font-size:30px} .hero p{color:#cbd5e1;margin:0;line-height:1.5}
-.tabs, .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
-button{border:0;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer;background:#111827;color:white}
-.tab{background:white;color:#111827} .active{background:#2563eb!important;color:white!important}
-.card{background:white;border-radius:20px;padding:18px;margin-bottom:16px;box-shadow:0 15px 40px rgba(0,0,0,.2)}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
-input,select,textarea{width:100%;padding:10px;border:1px solid #e5e7eb;border-radius:12px;margin:4px 0;font-size:14px}
-.row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-.chip{background:#f8fafc;border:1px solid #e5e7eb;border-radius:999px;padding:8px 10px;font-size:13px}
-.chip button{background:#fee2e2;color:#991b1b;border-radius:999px;padding:2px 7px;margin-left:6px}
-table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid #e5e7eb;padding:10px;text-align:left;font-size:13px} th{background:#f8fafc}
-textarea{height:300px;background:#020617;color:#d1fae5;font-family:Consolas,monospace}
-.section{display:none} .section.show{display:block}
-@media(max-width:900px){.grid,.row{grid-template-columns:1fr}}
+body{font-family:Arial;background:#111;color:white;padding:20px}
+.card{background:#222;padding:15px;border-radius:10px;margin-bottom:15px}
+input,select{padding:8px;margin:5px;width:200px}
+button{padding:8px;margin:5px;cursor:pointer}
 </style>
 </head>
 <body>
-<div class="app">
-<div class="hero"><h1>PAX Retail Signal Engine V2</h1><p>296 sektörlü firma listesi + 19 kaynak site yönetimi. JSON çıktılarını repo’daki <b>takip_listesi.json</b> ve <b>kaynak_listesi.json</b> dosyalarına commit et.</p></div>
 
-<div class="tabs">
-<button id="t1" class="tab active" onclick="tab('targets')">Takip Listeleri</button>
-<button id="t2" class="tab" onclick="tab('sources')">Kaynak Siteler</button>
-<button id="t3" class="tab" onclick="tab('export')">JSON Çıktıları</button>
-</div>
+<h1>PAX Signal Engine</h1>
 
-<section id="targets" class="section show"><div class="grid" id="targetCards"></div></section>
-
-<section id="sources" class="section">
 <div class="card">
-<h2>Kaynak Site Ekle</h2>
-<div class="row">
-<div><label>Ad</label><input id="sourceName" placeholder="Webrazzi"></div>
-<div><label>RSS</label><input id="sourceRss" placeholder="https://site.com/feed/"></div>
-<div><label>Web</label><input id="sourceWeb" placeholder="https://site.com/"></div>
-<button onclick="addSource()">Ekle</button>
-</div>
-<table><thead><tr><th>Ad</th><th>RSS</th><th>Web</th><th></th></tr></thead><tbody id="sourceTable"></tbody></table>
-</div>
-</section>
+<h3>Müşteriler</h3>
+<input id="name"><select id="sector">
+<option>Hazır Giyim</option>
+<option>Ev & Yaşam / Yapı Market</option>
+<option>FMCG Dağıtım Kanalları</option>
+<option>Gıda Perakendesi</option>
+<option>Elektronik & Beyaz Eşya</option>
+<option>Lojistik & Kargo</option>
+<option>Yeme-İçme</option>
+</select>
+<button onclick="add()">Ekle</button>
 
-<section id="export" class="section">
-<div class="toolbar">
-<button onclick="copy('targetsOut')">Takip JSON Kopyala</button>
-<button onclick="copy('sourcesOut')">Kaynak JSON Kopyala</button>
-<button onclick="download('takip_listesi.json','targetsOut')">Takip JSON İndir</button>
-<button onclick="download('kaynak_listesi.json','sourcesOut')">Kaynak JSON İndir</button>
+<ul id="list"></ul>
 </div>
-<div class="card"><h2>takip_listesi.json</h2><textarea id="targetsOut"></textarea></div>
-<div class="card"><h2>kaynak_listesi.json</h2><textarea id="sourcesOut"></textarea></div>
-</section>
-</div>
+
+<button onclick="generate()">JSON Oluştur</button>
+
+<textarea id="out" style="width:100%;height:300px"></textarea>
 
 <script>
-const sectorOptions = ["Hazır Giyim", "Ev & Yaşam / Yapı Market", "FMCG Dağıtım Kanalları", "Gıda Perakendesi", "Elektronik & Beyaz Eşya", "Lojistik & Kargo", "Yeme-İçme", "KasaPOS / ERP", "Ödeme Sistemleri", "Bankacılık", "Fintech"];
-let targets = {};
-let sources = [];
+let data = [];
 
-async function init(){
-  try{ targets = await (await fetch('takip_listesi.json?ts='+Date.now())).json(); }catch(e){ targets = JSON.parse(localStorage.getItem('targets')||'{"Müşteriler":[],"KasaPOS Firmaları":[],"Rakipler":[],"Fintech & Bankalar":[]}'); }
-  try{ sources = await (await fetch('kaynak_listesi.json?ts='+Date.now())).json(); }catch(e){ sources = JSON.parse(localStorage.getItem('sources')||'[]'); }
-  if(localStorage.getItem('targets')) targets = JSON.parse(localStorage.getItem('targets'));
-  if(localStorage.getItem('sources')) sources = JSON.parse(localStorage.getItem('sources'));
+function add(){
+  const name = document.getElementById("name").value;
+  const sector = document.getElementById("sector").value;
+
+  if(!name) return;
+
+  data.push({isim:name,sektor:sector});
   render();
 }
-
-function tab(x){
-  ['targets','sources','export'].forEach(s=>document.getElementById(s).classList.toggle('show',s===x));
-  document.getElementById('t1').classList.toggle('active',x==='targets');
-  document.getElementById('t2').classList.toggle('active',x==='sources');
-  document.getElementById('t3').classList.toggle('active',x==='export');
-  outputs();
-}
-
-function normItem(item){ return typeof item === 'string' ? {isim:item,sektor:''} : {isim:item.isim||item.firma||'', sektor:item.sektor||''}; }
 
 function render(){
-  renderTargets(); renderSources(); outputs();
-}
-
-function renderTargets(){
-  const root = document.getElementById('targetCards'); root.innerHTML='';
-  Object.keys(targets).forEach(cat=>{
-    const list = targets[cat].map(normItem);
-    targets[cat] = list;
-    const id = cat.replaceAll(' ','_').replaceAll('&','and');
-    const card = document.createElement('div'); card.className='card';
-    card.innerHTML = `<h2>${cat} (${list.length})</h2>
-      <div class="row"><div><label>İsim</label><input id="name_${id}" placeholder="Firma adı"></div>
-      <div><label>Sektör</label><select id="sector_${id}">${sectorOptions.map(s=>`<option>${s}</option>`).join('')}</select></div>
-      <button onclick="addTarget('${cat}','${id}')">Ekle</button></div>
-      <div class="chips" id="list_${id}"></div>`;
-    root.appendChild(card);
-    const l = document.getElementById('list_'+id);
-    list.forEach((it,i)=>{
-      const c = document.createElement('div'); c.className='chip';
-      c.innerHTML = `<b>${it.isim}</b>${it.sektor?' — '+it.sektor:''} <button onclick="removeTarget('${cat}',${i})">×</button>`;
-      l.appendChild(c);
-    });
+  const ul = document.getElementById("list");
+  ul.innerHTML="";
+  data.forEach((d,i)=>{
+    const li=document.createElement("li");
+    li.innerHTML = d.isim + " - " + d.sektor + 
+    " <button onclick='del("+i+")'>X</button>";
+    ul.appendChild(li);
   });
 }
 
-function addTarget(cat,id){
-  const name=document.getElementById('name_'+id).value.trim();
-  const sektor=document.getElementById('sector_'+id).value;
-  if(!name) return;
-  targets[cat].push({isim:name,sektor});
-  targets[cat].sort((a,b)=>a.isim.localeCompare(b.isim,'tr'));
-  localStorage.setItem('targets',JSON.stringify(targets));
+function del(i){
+  data.splice(i,1);
   render();
 }
 
-function removeTarget(cat,i){ targets[cat].splice(i,1); localStorage.setItem('targets',JSON.stringify(targets)); render(); }
-
-function renderSources(){
-  const tb=document.getElementById('sourceTable'); tb.innerHTML='';
-  sources.forEach((s,i)=>{
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td><b>${s.isim}</b></td><td>${s.rss||''}</td><td>${s.web||''}</td><td><button onclick="removeSource(${i})">Sil</button></td>`;
-    tb.appendChild(tr);
-  });
+function generate(){
+  document.getElementById("out").value = JSON.stringify({
+    "Müşteriler": data
+  },null,2);
 }
-
-function addSource(){
-  const isim=document.getElementById('sourceName').value.trim(), rss=document.getElementById('sourceRss').value.trim(), web=document.getElementById('sourceWeb').value.trim();
-  if(!isim || (!rss && !web)) return alert('Ad + RSS veya Web gerekli');
-  sources.push({isim,rss,web});
-  localStorage.setItem('sources',JSON.stringify(sources));
-  ['sourceName','sourceRss','sourceWeb'].forEach(id=>document.getElementById(id).value='');
-  render();
-}
-
-function removeSource(i){ sources.splice(i,1); localStorage.setItem('sources',JSON.stringify(sources)); render(); }
-
-function outputs(){
-  document.getElementById('targetsOut').value=JSON.stringify(targets,null,2);
-  document.getElementById('sourcesOut').value=JSON.stringify(sources,null,2);
-}
-
-async function copy(id){ await navigator.clipboard.writeText(document.getElementById(id).value); alert('Kopyalandı'); }
-function download(name,id){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([document.getElementById(id).value],{type:'application/json'})); a.download=name; a.click(); }
-
-init();
 </script>
+
 </body>
 </html>
