@@ -1,0 +1,92 @@
+[
+  {
+    "isim": "BThaber",
+    "rss": "https://www.bthaber.com/feed/",
+    "web": "https://bthaber.com/"
+  },
+  {
+    "isim": "Webrazzi",
+    "rss": "https://webrazzi.com/feed",
+    "web": "https://webrazzi.com/"
+  },
+  {
+    "isim": "Digital Age",
+    "rss": "https://digitalage.com.tr/feed/",
+    "web": "https://digitalage.com.tr/"
+  },
+  {
+    "isim": "Pazarlamasyon",
+    "rss": "https://www.pazarlamasyon.com/feed/",
+    "web": "https://www.pazarlamasyon.com/"
+  },
+  {
+    "isim": "Marketing Türkiye",
+    "rss": "https://www.marketingturkiye.com.tr/feed/",
+    "web": "https://www.marketingturkiye.com.tr/"
+  },
+  {
+    "isim": "Branding Türkiye",
+    "rss": "https://www.brandingturkiye.com/feed/",
+    "web": "https://www.brandingturkiye.com/"
+  },
+  {
+    "isim": "BT Günlüğü",
+    "rss": "https://www.btgunlugu.com/feed/",
+    "web": "https://www.btgunlugu.com/"
+  },
+  {
+    "isim": "FintechTime",
+    "rss": "https://fintechtime.com/feed/",
+    "web": "https://fintechtime.com/"
+  },
+  {
+    "isim": "PSM Dergi",
+    "rss": "https://psmdergi.com/feed/",
+    "web": "https://psmdergi.com/"
+  },
+  {
+    "isim": "PSM Mag",
+    "rss": "https://www.psmmag.com/feed/",
+    "web": "https://www.psmmag.com/"
+  },
+  {
+    "isim": "Perakende.org",
+    "rss": "https://perakende.org/feed/",
+    "web": "https://perakende.org/"
+  },
+  {
+    "isim": "Bi'Sektör",
+    "rss": "https://www.bisektor.com/feed/",
+    "web": "https://www.bisektor.com/"
+  },
+  {
+    "isim": "Perakende Zirvesi",
+    "rss": "",
+    "web": "https://www.perakendezirvesi.com/"
+  },
+  {
+    "isim": "PSM Awards",
+    "rss": "",
+    "web": "https://psmawards.com/"
+  },
+  {
+    "isim": "Smarti Awards",
+    "rss": "",
+    "web": "https://smartiawards.com/"
+  },
+  {
+    "isim": "Bilişim Zirvesi",
+    "rss": "",
+    "web": "https://www.bilisimzirvesi.com.tr/"
+  },
+  {
+    "isim": "Perakende Medya Zirvesi",
+    "rss": "",
+    "web": "https://perakendemedyazirvesi.com/"
+  },
+  {
+    "isim": "IT Network",
+    "rss": "",
+    "web": "https://www.itnetwork.com.tr/"
+  }
+]
