@@ -5,6 +5,61 @@
     "web": "https://bthaber.com/"
   },
   {
+    "isim": "Bilişim Zirvesi",
+    "rss": "",
+    "web": "https://www.bilisimzirvesi.com.tr/"
+  },
+  {
+    "isim": "Bi'Sektör",
+    "rss": "https://www.bisektor.com/feed/",
+    "web": "https://www.bisektor.com/"
+  },
+  {
+    "isim": "Bi'Sektör Retail Talks",
+    "rss": "",
+    "web": "https://www.bisektor.com/retail-talks-etkinlikler/"
+  },
+  {
+    "isim": "Perakende Medya Zirvesi",
+    "rss": "",
+    "web": "https://perakendemedyazirvesi.com/"
+  },
+  {
+    "isim": "Perakende Zirvesi",
+    "rss": "",
+    "web": "https://www.perakendezirvesi.com/"
+  },
+  {
+    "isim": "PSM Dergi",
+    "rss": "https://psmdergi.com/feed/",
+    "web": "https://psmdergi.com/"
+  },
+  {
+    "isim": "PSM Mag",
+    "rss": "https://www.psmmag.com/feed/",
+    "web": "https://www.psmmag.com/"
+  },
+  {
+    "isim": "PSM Awards",
+    "rss": "",
+    "web": "https://psmawards.com/"
+  },
+  {
+    "isim": "Smarti Awards",
+    "rss": "",
+    "web": "https://smartiawards.com/"
+  },
+  {
+    "isim": "Perakende.org",
+    "rss": "https://perakende.org/feed/",
+    "web": "https://perakende.org/"
+  },
+  {
+    "isim": "FintechTime",
+    "rss": "https://fintechtime.com/feed/",
+    "web": "https://fintechtime.com/"
+  },
+  {
     "isim": "Webrazzi",
     "rss": "https://webrazzi.com/feed",
     "web": "https://webrazzi.com/"
@@ -30,63 +85,13 @@
     "web": "https://www.brandingturkiye.com/"
   },
   {
-    "isim": "BT Günlüğü",
-    "rss": "https://www.btgunlugu.com/feed/",
-    "web": "https://www.btgunlugu.com/"
-  },
-  {
-    "isim": "FintechTime",
-    "rss": "https://fintechtime.com/feed/",
-    "web": "https://fintechtime.com/"
-  },
-  {
-    "isim": "PSM Dergi",
-    "rss": "https://psmdergi.com/feed/",
-    "web": "https://psmdergi.com/"
-  },
-  {
-    "isim": "PSM Mag",
-    "rss": "https://www.psmmag.com/feed/",
-    "web": "https://www.psmmag.com/"
-  },
-  {
-    "isim": "Perakende.org",
-    "rss": "https://perakende.org/feed/",
-    "web": "https://perakende.org/"
-  },
-  {
-    "isim": "Bi'Sektör",
-    "rss": "https://www.bisektor.com/feed/",
-    "web": "https://www.bisektor.com/"
-  },
-  {
-    "isim": "Perakende Zirvesi",
-    "rss": "",
-    "web": "https://www.perakendezirvesi.com/"
-  },
-  {
-    "isim": "PSM Awards",
-    "rss": "",
-    "web": "https://psmawards.com/"
-  },
-  {
-    "isim": "Smarti Awards",
-    "rss": "",
-    "web": "https://smartiawards.com/"
-  },
-  {
-    "isim": "Bilişim Zirvesi",
-    "rss": "",
-    "web": "https://www.bilisimzirvesi.com.tr/"
-  },
-  {
-    "isim": "Perakende Medya Zirvesi",
-    "rss": "",
-    "web": "https://perakendemedyazirvesi.com/"
-  },
-  {
     "isim": "IT Network",
     "rss": "",
     "web": "https://www.itnetwork.com.tr/"
+  },
+  {
+    "isim": "BT Günlüğü",
+    "rss": "https://www.btgunlugu.com/feed/",
+    "web": "https://www.btgunlugu.com/"
   }
 ]

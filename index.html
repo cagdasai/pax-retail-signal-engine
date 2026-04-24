@@ -1,125 +1,156 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PAX Retail Signal Engine | Yönetim Paneli</title>
-  <style>
-    :root{--text:#111827;--muted:#64748b;--line:#e5e7eb;--blue:#2563eb;--green:#16a34a;--red:#dc2626;--purple:#7c3aed}
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,Arial,sans-serif;background:linear-gradient(135deg,#0f172a,#1e293b 55%,#020617);color:var(--text);min-height:100vh;padding:28px}
-    .app{max-width:1320px;margin:0 auto}
-    .hero{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:white;border-radius:24px;padding:28px;margin-bottom:20px;box-shadow:0 24px 80px rgba(0,0,0,.25)}
-    .hero h1{margin:0 0 8px;font-size:31px;letter-spacing:-.04em}.hero p{margin:0;color:#cbd5e1;font-size:15px;line-height:1.5}
-    .status{margin-top:16px;display:inline-flex;padding:9px 12px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);color:#e2e8f0;font-size:13px}
-    .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:22px}
-    .stat{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:16px}.stat span{display:block;color:#cbd5e1;font-size:12px}.stat strong{display:block;font-size:26px;margin-top:6px}
-    .tabs,.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
-    button{border:none;border-radius:12px;padding:11px 14px;cursor:pointer;font-weight:700;background:#111827;color:white}button:hover{opacity:.92}
-    .tab{background:white;color:#111827;border:1px solid var(--line)}.tab.active{background:var(--blue);color:white;border-color:var(--blue)}
-    .btn-blue{background:var(--blue)}.btn-green{background:var(--green)}.btn-red{background:var(--red)}.btn-light{background:white;color:#111827;border:1px solid var(--line)}.btn-purple{background:var(--purple)}
-    .section{display:none}.section.active{display:block}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
-    .card,.output{background:white;border-radius:22px;padding:20px;box-shadow:0 18px 50px rgba(15,23,42,.18);border:1px solid rgba(226,232,240,.9)}
-    .card-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.title-wrap h2{margin:0;font-size:19px}.title-wrap p{margin:5px 0 0;color:var(--muted);font-size:13px}
-    .badge{padding:7px 10px;border-radius:999px;font-size:12px;font-weight:800;background:#eef2ff;color:#3730a3;white-space:nowrap}
-    .add-row{display:flex;gap:8px;margin-bottom:12px}
-    input,textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px 12px;font-size:14px;outline:none;background:#fff}
-    .search{margin-bottom:12px;background:#f8fafc}.list{display:flex;flex-wrap:wrap;gap:8px;min-height:48px}
-    .chip{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:#f8fafc;padding:8px 10px;border-radius:999px;font-size:13px;max-width:100%}.chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px}.chip button{width:22px;height:22px;padding:0;border-radius:50%;background:#fee2e2;color:#991b1b;font-size:13px;line-height:22px}
-    .source-form{display:grid;grid-template-columns:1fr 1.4fr 1.4fr auto;gap:10px;align-items:end;margin-bottom:16px}.source-form label{display:block;font-size:12px;color:var(--muted);font-weight:700;margin-bottom:6px}
-    table{width:100%;border-collapse:collapse;background:white;border-radius:16px;overflow:hidden}th,td{border-bottom:1px solid var(--line);padding:12px;text-align:left;font-size:13px;vertical-align:top}th{background:#f8fafc;color:#334155;font-size:12px;text-transform:uppercase}td a{color:var(--blue);word-break:break-all}.source-actions button{padding:7px 9px;border-radius:9px;font-size:12px;margin:2px}
-    .output{margin-top:18px}.output h2{margin:0 0 8px}.output p{margin:0 0 12px;color:var(--muted);font-size:13px}
-    textarea{height:330px;font-family:Consolas,Monaco,monospace;resize:vertical;background:#0b1020;color:#d1fae5;border-color:#1e293b}
-    .hint{margin-top:12px;padding:14px;border-radius:16px;background:#fef3c7;color:#92400e;font-size:13px;line-height:1.5}
-    .footer{color:#cbd5e1;text-align:center;margin:22px 0 4px;font-size:12px}
-    @media(max-width:1000px){body{padding:16px}.grid,.stats,.source-form{grid-template-columns:1fr}table{display:block;overflow-x:auto}}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PAX Retail Signal Engine V2</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#0f172a;color:#111827;padding:24px}
+.app{max-width:1280px;margin:auto}
+.hero{background:linear-gradient(135deg,#1e293b,#111827);color:white;border-radius:24px;padding:26px;margin-bottom:18px}
+.hero h1{margin:0 0 8px;font-size:30px} .hero p{color:#cbd5e1;margin:0;line-height:1.5}
+.tabs, .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+button{border:0;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer;background:#111827;color:white}
+.tab{background:white;color:#111827} .active{background:#2563eb!important;color:white!important}
+.card{background:white;border-radius:20px;padding:18px;margin-bottom:16px;box-shadow:0 15px 40px rgba(0,0,0,.2)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+input,select,textarea{width:100%;padding:10px;border:1px solid #e5e7eb;border-radius:12px;margin:4px 0;font-size:14px}
+.row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{background:#f8fafc;border:1px solid #e5e7eb;border-radius:999px;padding:8px 10px;font-size:13px}
+.chip button{background:#fee2e2;color:#991b1b;border-radius:999px;padding:2px 7px;margin-left:6px}
+table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid #e5e7eb;padding:10px;text-align:left;font-size:13px} th{background:#f8fafc}
+textarea{height:300px;background:#020617;color:#d1fae5;font-family:Consolas,monospace}
+.section{display:none} .section.show{display:block}
+@media(max-width:900px){.grid,.row{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 <div class="app">
-  <section class="hero">
-    <h1>PAX Retail Signal Engine</h1>
-    <p>Takip listelerini ve kaynak siteleri yönet. Çıktılar: <b>takip_listesi.json</b> ve <b>kaynak_listesi.json</b>.</p>
-    <div class="status" id="loadStatus">Liste yükleniyor...</div>
-    <div class="stats">
-      <div class="stat"><span>Müşteriler</span><strong id="stat-musteriler">0</strong></div>
-      <div class="stat"><span>KasaPOS Firmaları</span><strong id="stat-kasa">0</strong></div>
-      <div class="stat"><span>Rakipler</span><strong id="stat-rakip">0</strong></div>
-      <div class="stat"><span>Fintech & Bankalar</span><strong id="stat-fintech">0</strong></div>
-      <div class="stat"><span>Kaynak Siteler</span><strong id="stat-sources">0</strong></div>
-    </div>
-  </section>
-  <div class="tabs">
-    <button class="tab active" id="tab-targets" onclick="switchTab('targets')">Takip Listeleri</button>
-    <button class="tab" id="tab-sources" onclick="switchTab('sources')">Kaynak Siteler</button>
-    <button class="tab" id="tab-export" onclick="switchTab('export')">JSON Çıktıları</button>
-  </div>
-  <section id="section-targets" class="section active">
-    <div class="toolbar">
-      <button class="btn-blue" onclick="generateTargetsJSON()">Takip JSON Oluştur</button>
-      <button class="btn-green" onclick="copyText('targetsOutput')">Takip JSON Kopyala</button>
-      <button class="btn-light" onclick="downloadFile('takip_listesi.json','targetsOutput')">takip_listesi.json İndir</button>
-      <button class="btn-red" onclick="resetTargetsLocal()">Lokal Değişiklikleri Temizle</button>
-    </div>
-    <section class="grid" id="cards"></section>
-  </section>
-  <section id="section-sources" class="section">
-    <div class="toolbar">
-      <button class="btn-purple" onclick="generateSourcesJSON()">Kaynak JSON Oluştur</button>
-      <button class="btn-green" onclick="copyText('sourcesOutput')">Kaynak JSON Kopyala</button>
-      <button class="btn-light" onclick="downloadFile('kaynak_listesi.json','sourcesOutput')">kaynak_listesi.json İndir</button>
-      <button class="btn-red" onclick="resetSourcesLocal()">Lokal Değişiklikleri Temizle</button>
-    </div>
-    <div class="card">
-      <div class="card-header"><div class="title-wrap"><h2>Kaynak Site Ekle</h2><p>RSS varsa RSS URL gir. Yoksa sadece Web URL yeterli.</p></div><div class="badge" id="sourceBadge">0 kaynak</div></div>
-      <div class="source-form">
-        <div><label>Kaynak Adı</label><input id="sourceName" placeholder="Örn: Webrazzi"></div>
-        <div><label>RSS URL</label><input id="sourceRss" placeholder="https://site.com/feed/"></div>
-        <div><label>Web URL</label><input id="sourceWeb" placeholder="https://site.com/"></div>
-        <div><button onclick="addSource()">Kaynak Ekle</button></div>
-      </div>
-      <input class="search" id="sourceSearch" placeholder="Kaynaklarda ara..." oninput="renderSourcesTable()">
-      <table><thead><tr><th>Kaynak</th><th>RSS URL</th><th>Web URL</th><th>İşlem</th></tr></thead><tbody id="sourcesTable"></tbody></table>
-    </div>
-  </section>
-  <section id="section-export" class="section">
-    <section class="output"><h2>takip_listesi.json</h2><p>Bu çıktıyı aynı isimli repo dosyasına koy.</p><textarea id="targetsOutput" spellcheck="false"></textarea></section>
-    <section class="output"><h2>kaynak_listesi.json</h2><p>Bu çıktıyı aynı isimli repo dosyasına koy.</p><textarea id="sourcesOutput" spellcheck="false"></textarea><div class="hint">Panel tarayıcıda kendini güncel tutar. GitHub’daki gerçek dosyalar, JSON’u kopyalayıp commit edince değişir.</div></section>
-  </section>
-  <div class="footer">PAX Retail Signal Engine · Admin Panel</div>
+<div class="hero"><h1>PAX Retail Signal Engine V2</h1><p>296 sektörlü firma listesi + 19 kaynak site yönetimi. JSON çıktılarını repo’daki <b>takip_listesi.json</b> ve <b>kaynak_listesi.json</b> dosyalarına commit et.</p></div>
+
+<div class="tabs">
+<button id="t1" class="tab active" onclick="tab('targets')">Takip Listeleri</button>
+<button id="t2" class="tab" onclick="tab('sources')">Kaynak Siteler</button>
+<button id="t3" class="tab" onclick="tab('export')">JSON Çıktıları</button>
 </div>
+
+<section id="targets" class="section show"><div class="grid" id="targetCards"></div></section>
+
+<section id="sources" class="section">
+<div class="card">
+<h2>Kaynak Site Ekle</h2>
+<div class="row">
+<div><label>Ad</label><input id="sourceName" placeholder="Webrazzi"></div>
+<div><label>RSS</label><input id="sourceRss" placeholder="https://site.com/feed/"></div>
+<div><label>Web</label><input id="sourceWeb" placeholder="https://site.com/"></div>
+<button onclick="addSource()">Ekle</button>
+</div>
+<table><thead><tr><th>Ad</th><th>RSS</th><th>Web</th><th></th></tr></thead><tbody id="sourceTable"></tbody></table>
+</div>
+</section>
+
+<section id="export" class="section">
+<div class="toolbar">
+<button onclick="copy('targetsOut')">Takip JSON Kopyala</button>
+<button onclick="copy('sourcesOut')">Kaynak JSON Kopyala</button>
+<button onclick="download('takip_listesi.json','targetsOut')">Takip JSON İndir</button>
+<button onclick="download('kaynak_listesi.json','sourcesOut')">Kaynak JSON İndir</button>
+</div>
+<div class="card"><h2>takip_listesi.json</h2><textarea id="targetsOut"></textarea></div>
+<div class="card"><h2>kaynak_listesi.json</h2><textarea id="sourcesOut"></textarea></div>
+</section>
+</div>
+
 <script>
-let targets={}, sources=[];
-const defaultTargets = {"Müşteriler":[],"KasaPOS Firmaları":[],"Rakipler":[],"Fintech & Bankalar":[]};
-const categoryMeta={"Müşteriler":{desc:"Gelir ve satış fırsatı odağı",stat:"stat-musteriler"},"KasaPOS Firmaları":{desc:"Entegrasyon ve kanal ekosistemi",stat:"stat-kasa"},"Rakipler":{desc:"Pazar tehdidi ve konumlanma takibi",stat:"stat-rakip"},"Fintech & Bankalar":{desc:"Ödeme ekosistemi ve iş ortakları",stat:"stat-fintech"}};
-function setStatus(t){document.getElementById("loadStatus").innerText=t}
-function saveTargets(){localStorage.setItem("paxSignalTargets",JSON.stringify(targets))}
-function saveSources(){localStorage.setItem("paxSignalSources",JSON.stringify(sources))}
-function switchTab(tab){["targets","sources","export"].forEach(t=>{document.getElementById("tab-"+t).classList.toggle("active",t===tab);document.getElementById("section-"+t).classList.toggle("active",t===tab)});generateTargetsJSON(false);generateSourcesJSON(false)}
+const sectorOptions = ["Hazır Giyim", "Ev & Yaşam / Yapı Market", "FMCG Dağıtım Kanalları", "Gıda Perakendesi", "Elektronik & Beyaz Eşya", "Lojistik & Kargo", "Yeme-İçme", "KasaPOS / ERP", "Ödeme Sistemleri", "Bankacılık", "Fintech"];
+let targets = {};
+let sources = [];
+
 async function init(){
-  try{const r=await fetch("takip_listesi.json?ts="+Date.now());targets=await r.json()}catch(e){targets=JSON.parse(localStorage.getItem("paxSignalTargets")||JSON.stringify(defaultTargets))}
-  try{const r=await fetch("kaynak_listesi.json?ts="+Date.now());sources=await r.json()}catch(e){sources=JSON.parse(localStorage.getItem("paxSignalSources")||"[]")}
-  const lt=localStorage.getItem("paxSignalTargets"); if(lt) targets=JSON.parse(lt);
-  const ls=localStorage.getItem("paxSignalSources"); if(ls) sources=JSON.parse(ls);
-  setStatus("JSON dosyaları yüklendi."); renderAll();
+  try{ targets = await (await fetch('takip_listesi.json?ts='+Date.now())).json(); }catch(e){ targets = JSON.parse(localStorage.getItem('targets')||'{"Müşteriler":[],"KasaPOS Firmaları":[],"Rakipler":[],"Fintech & Bankalar":[]}'); }
+  try{ sources = await (await fetch('kaynak_listesi.json?ts='+Date.now())).json(); }catch(e){ sources = JSON.parse(localStorage.getItem('sources')||'[]'); }
+  if(localStorage.getItem('targets')) targets = JSON.parse(localStorage.getItem('targets'));
+  if(localStorage.getItem('sources')) sources = JSON.parse(localStorage.getItem('sources'));
+  render();
 }
-function renderAll(){renderTargets();renderSourcesTable();updateStats();generateTargetsJSON(false);generateSourcesJSON(false)}
-function renderTargets(){const cards=document.getElementById("cards");cards.innerHTML="";Object.keys(defaultTargets).forEach(category=>{if(!targets[category])targets[category]=[];const safeId=category.replaceAll(" ","-").replaceAll("&","and");const card=document.createElement("div");card.className="card";card.innerHTML=`<div class="card-header"><div class="title-wrap"><h2>${category}</h2><p>${categoryMeta[category]?.desc||""}</p></div><div class="badge">${targets[category].length} kayıt</div></div><div class="add-row"><input id="input-${safeId}" placeholder="Yeni isim ekle..." onkeydown="if(event.key==='Enter') addTarget('${category}','input-${safeId}')"><button onclick="addTarget('${category}','input-${safeId}')">Ekle</button></div><input class="search" id="search-${safeId}" placeholder="Bu kategoride ara..." oninput="filterCategory('${category}','search-${safeId}','list-${safeId}')"><div class="list" id="list-${safeId}"></div>`;cards.appendChild(card);renderTargetList(category,`list-${safeId}`,"")})}
-function renderTargetList(category,listId,filterText){const list=document.getElementById(listId);list.innerHTML="";targets[category].filter(i=>i.toLowerCase().includes((filterText||"").toLowerCase())).forEach(item=>{const idx=targets[category].indexOf(item);const chip=document.createElement("div");chip.className="chip";chip.innerHTML=`<span>${item}</span><button onclick="removeTarget('${category}',${idx})">×</button>`;list.appendChild(chip)})}
-function filterCategory(c,s,l){renderTargetList(c,l,document.getElementById(s).value)}
-function addTarget(c,id){const input=document.getElementById(id);const v=input.value.trim();if(!v)return;if(targets[c].some(x=>x.toLowerCase()===v.toLowerCase()))return alert("Bu isim zaten var.");targets[c].push(v);targets[c].sort((a,b)=>a.localeCompare(b,"tr"));input.value="";saveTargets();renderAll()}
-function removeTarget(c,i){targets[c].splice(i,1);saveTargets();renderAll()}
-function addSource(){const isim=document.getElementById("sourceName").value.trim(),rss=document.getElementById("sourceRss").value.trim(),web=document.getElementById("sourceWeb").value.trim();if(!isim)return alert("Kaynak adı gerekli.");if(!rss&&!web)return alert("RSS veya Web URL gerekli.");if(sources.some(s=>s.isim.toLowerCase()===isim.toLowerCase()))return alert("Bu kaynak zaten var.");sources.push({isim,rss,web});sources.sort((a,b)=>a.isim.localeCompare(b.isim,"tr"));["sourceName","sourceRss","sourceWeb"].forEach(id=>document.getElementById(id).value="");saveSources();renderAll()}
-function removeSource(i){sources.splice(i,1);saveSources();renderAll()}
-function editSource(i){const s=sources[i];const isim=prompt("Kaynak adı:",s.isim);if(isim===null)return;const rss=prompt("RSS URL:",s.rss||"");if(rss===null)return;const web=prompt("Web URL:",s.web||"");if(web===null)return;sources[i]={isim:isim.trim(),rss:rss.trim(),web:web.trim()};saveSources();renderAll()}
-function renderSourcesTable(){const q=(document.getElementById("sourceSearch")?.value||"").toLowerCase();const tb=document.getElementById("sourcesTable");tb.innerHTML="";sources.map((s,i)=>({...s,i})).filter(s=>(s.isim+" "+s.rss+" "+s.web).toLowerCase().includes(q)).forEach(s=>{const tr=document.createElement("tr");tr.innerHTML=`<td><b>${s.isim}</b></td><td>${s.rss?`<a href="${s.rss}" target="_blank">${s.rss}</a>`:"Yok"}</td><td>${s.web?`<a href="${s.web}" target="_blank">${s.web}</a>`:"Yok"}</td><td class="source-actions"><button class="btn-light" onclick="editSource(${s.i})">Düzenle</button><button class="btn-red" onclick="removeSource(${s.i})">Sil</button></td>`;tb.appendChild(tr)});document.getElementById("sourceBadge").innerText=sources.length+" kaynak"}
-function updateStats(){Object.keys(defaultTargets).forEach(c=>document.getElementById(categoryMeta[c].stat).innerText=(targets[c]||[]).length);document.getElementById("stat-sources").innerText=sources.length}
-function generateTargetsJSON(f=true){document.getElementById("targetsOutput").value=JSON.stringify(targets,null,2);if(f)document.getElementById("targetsOutput").focus()}
-function generateSourcesJSON(f=true){document.getElementById("sourcesOutput").value=JSON.stringify(sources,null,2);if(f)document.getElementById("sourcesOutput").focus()}
-async function copyText(id){try{await navigator.clipboard.writeText(document.getElementById(id).value);alert("JSON kopyalandı.")}catch(e){alert("Manuel kopyalayabilirsin.")}}
-function downloadFile(name,id){const blob=new Blob([document.getElementById(id).value],{type:"application/json;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href)}
-function resetTargetsLocal(){localStorage.removeItem("paxSignalTargets");location.reload()}
-function resetSourcesLocal(){localStorage.removeItem("paxSignalSources");location.reload()}
+
+function tab(x){
+  ['targets','sources','export'].forEach(s=>document.getElementById(s).classList.toggle('show',s===x));
+  document.getElementById('t1').classList.toggle('active',x==='targets');
+  document.getElementById('t2').classList.toggle('active',x==='sources');
+  document.getElementById('t3').classList.toggle('active',x==='export');
+  outputs();
+}
+
+function normItem(item){ return typeof item === 'string' ? {isim:item,sektor:''} : {isim:item.isim||item.firma||'', sektor:item.sektor||''}; }
+
+function render(){
+  renderTargets(); renderSources(); outputs();
+}
+
+function renderTargets(){
+  const root = document.getElementById('targetCards'); root.innerHTML='';
+  Object.keys(targets).forEach(cat=>{
+    const list = targets[cat].map(normItem);
+    targets[cat] = list;
+    const id = cat.replaceAll(' ','_').replaceAll('&','and');
+    const card = document.createElement('div'); card.className='card';
+    card.innerHTML = `<h2>${cat} (${list.length})</h2>
+      <div class="row"><div><label>İsim</label><input id="name_${id}" placeholder="Firma adı"></div>
+      <div><label>Sektör</label><select id="sector_${id}">${sectorOptions.map(s=>`<option>${s}</option>`).join('')}</select></div>
+      <button onclick="addTarget('${cat}','${id}')">Ekle</button></div>
+      <div class="chips" id="list_${id}"></div>`;
+    root.appendChild(card);
+    const l = document.getElementById('list_'+id);
+    list.forEach((it,i)=>{
+      const c = document.createElement('div'); c.className='chip';
+      c.innerHTML = `<b>${it.isim}</b>${it.sektor?' — '+it.sektor:''} <button onclick="removeTarget('${cat}',${i})">×</button>`;
+      l.appendChild(c);
+    });
+  });
+}
+
+function addTarget(cat,id){
+  const name=document.getElementById('name_'+id).value.trim();
+  const sektor=document.getElementById('sector_'+id).value;
+  if(!name) return;
+  targets[cat].push({isim:name,sektor});
+  targets[cat].sort((a,b)=>a.isim.localeCompare(b.isim,'tr'));
+  localStorage.setItem('targets',JSON.stringify(targets));
+  render();
+}
+
+function removeTarget(cat,i){ targets[cat].splice(i,1); localStorage.setItem('targets',JSON.stringify(targets)); render(); }
+
+function renderSources(){
+  const tb=document.getElementById('sourceTable'); tb.innerHTML='';
+  sources.forEach((s,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><b>${s.isim}</b></td><td>${s.rss||''}</td><td>${s.web||''}</td><td><button onclick="removeSource(${i})">Sil</button></td>`;
+    tb.appendChild(tr);
+  });
+}
+
+function addSource(){
+  const isim=document.getElementById('sourceName').value.trim(), rss=document.getElementById('sourceRss').value.trim(), web=document.getElementById('sourceWeb').value.trim();
+  if(!isim || (!rss && !web)) return alert('Ad + RSS veya Web gerekli');
+  sources.push({isim,rss,web});
+  localStorage.setItem('sources',JSON.stringify(sources));
+  ['sourceName','sourceRss','sourceWeb'].forEach(id=>document.getElementById(id).value='');
+  render();
+}
+
+function removeSource(i){ sources.splice(i,1); localStorage.setItem('sources',JSON.stringify(sources)); render(); }
+
+function outputs(){
+  document.getElementById('targetsOut').value=JSON.stringify(targets,null,2);
+  document.getElementById('sourcesOut').value=JSON.stringify(sources,null,2);
+}
+
+async function copy(id){ await navigator.clipboard.writeText(document.getElementById(id).value); alert('Kopyalandı'); }
+function download(name,id){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([document.getElementById(id).value],{type:'application/json'})); a.download=name; a.click(); }
+
 init();
 </script>
 </body>

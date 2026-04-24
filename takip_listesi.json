@@ -1,84 +1,1306 @@
 {
   "Müşteriler": [
-    "Beymen",
-    "Boyner",
-    "İpekyol",
-    "Kiğılı",
-    "Suwen",
-    "Yargıcı",
-    "Evkur",
-    "Migros",
-    "A101",
-    "BİM",
-    "Şok",
-    "CarrefourSA",
-    "Teknosa",
-    "MediaMarkt",
-    "English Home",
-    "Madame Coco",
-    "Gratis",
-    "Watsons",
-    "Yurtiçi Kargo",
-    "MNG Kargo",
-    "Mavi",
-    "Koton",
-    "LC Waikiki",
-    "Flo",
-    "Karaca",
-    "Kahve Dünyası",
-    "Starbucks",
-    "Tavuk Dünyası",
-    "Yemeksepeti",
-    "Trendyol",
-    "Hepsijet"
+    {
+      "isim": "AVVA",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "BENETTON",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "BJK",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "CHAKRA",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "DUFY",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "FLORMAR",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "KAYRA (SARAH KONFEKSİYON)",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "MADAME COCO",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "ROMAN",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "BALPARMAK",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "BAUHAUS",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "FLO",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "FİBA RETAIL (M&S)",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "KOTON",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "KOÇTAŞ",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "LCW",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "MANGO",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "ONUR MARKET",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "PAŞABAHÇE MAĞAZALARI",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "SEYHANLAR MARKET",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "TEKNOSA",
+      "sektor": "Elektronik & Beyaz Eşya"
+    },
+    {
+      "isim": "TEKZEN",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "WATSONS",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "ÇETİNKAYA",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "ÖZDİLEK",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "AKER",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "ANPA GROSS",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "ANTEPHAN KÜNEFE",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "BBM PERAKENDE (BOLDY)",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "ESSILOR LUXOTTICA",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "GOLDEN ROSE",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "GROSPER",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "GİZİA",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "HATEMOĞLU",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "SNOWY ULYU KARDEŞLER",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "TATLIBAK",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "TEDİ DISCOUNT TEKSTİL MAĞAZACILIK A.Ş.",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "TERGAN",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "ALPET PETROL",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "ANTEPLİOĞLU",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "ARDEN MARKET",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "AYPA MARKET",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "BİÇEN MARKET",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "DHL KARGO (MNG)",
+      "sektor": "Lojistik & Kargo"
+    },
+    {
+      "isim": "HALKTAN KURUYEMİŞ",
+      "sektor": "Yeme-İçme"
+    },
+    {
+      "isim": "HAPPY CENTER",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "ONUR HİPERMARKETLERİ",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "SEPHORA",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "Showmar Hipermarketleri",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "ÇAĞRI MARKET",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "ÜLKER",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Ülker distribütörleri",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "ALTUN MARKET",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "E-BEBEK",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "A101",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "ADİL IŞIK",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "ALTINYILDIZ",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "BOYNER",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "BİSSE",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "COLINS",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "DAGİ",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "ELLE",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "ENDER MAĞAZALARI",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "GALATASARAY MAĞAZACILIK",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "GUSTO",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "L'OCCİTANE",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "LEE COOPER",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "LESCON",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "LUFİAN",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "METRO MARKET",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "MUDO",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "PAŞA FIRINI",
+      "sektor": "Yeme-İçme"
+    },
+    {
+      "isim": "SPX",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "SÜVARİ",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "TWIGY",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "UKİ",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "YVES ROCHER",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "İMZA",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "DAMAT",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "ETİ",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "GREYDER",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "KARACA ZÜCCACİYE",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "NIKE SPORTINN",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "Ramsey Kip Mağazacılık",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "SKECHERS",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "YURTİÇİ KARGO",
+      "sektor": "Lojistik & Kargo"
+    },
+    {
+      "isim": "BG STORE",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "BLUEMİNT",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "BİZİM TOPTAN",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "COLUMBİA",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "D-REAM",
+      "sektor": "Yeme-İçme"
+    },
+    {
+      "isim": "ECCO",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "SNEAKS UP",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "TUDORS",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "CİVİL",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "MAD PARFUM",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "SOFTEN KOZMETİK",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "SUWEN",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "YARGICI",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "BEYMEN",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "EVKUR",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "JACK & JONES",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "KİĞILI",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "ÇİFT GEYİK KARACA",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "İPEKYOL",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "SEVİL PARFÜMERİ",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "ACK Food Solutions (Bodrum)",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "ADORE",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "AKBAL GIDA",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "ALTUNBİLEKLER",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "ARAS KARGO",
+      "sektor": "Lojistik & Kargo"
+    },
+    {
+      "isim": "ARMAĞAN OYUNCAK",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "ARÇELİK SERVİSLERİ",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "AYDINLI",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "AYTEMİZ PETROL",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Alliance Healthcare",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Alpedo",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Altıparmak",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Anadolu Efes",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Arma İlaç (Oyak)",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Arma İlaç (Veri Çekme)",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Aroma",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "BANVİT",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "BAT Türkiye",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "BELLA MAISON",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "BELLONA",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "BEŞLER SUCUK",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "BONVENO",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "BR MAĞAZACILIK",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "Beiersdorf (Nivea)",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Beyaz eşya ve elektronik bakım ekipleri",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Beylerbeyi",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Bosch/Siemens",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Brisa",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Brown - Forman",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Bunge",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Burda Bebek",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "BİM-FİLE",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "CARREFOUR",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "CHANEL",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "COŞKUN ET",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Coca Cola",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "D&R",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "DECATHLON",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "DEFACTO",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "DERİMOD",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "DIVARESE",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "DOĞTAŞ",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "Danone",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Danone Tikveşli",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Danone Waters",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Dardanel",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Deva İçecek",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Doluca",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Doğuş Çay",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Düzey",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "ENGLISH HOME",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "EREN PERAKENDE",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "EV SHOP",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "EV-DİZ MOBİLYA",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "EVE SHOP",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "EVIDEA",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "Ecza kooperatifleri",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Eczacıbaşı",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Efe Rakı",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Efes Belarus",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Efes Pilsen - Gürcistan",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Efes Pilsen - Moldova",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Eker",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Ekol Food Service",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Entaş Gıda",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Erikli",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Eruslu Sağlık Ürünleri",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Eutobacco (Turktab)",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "FAİK SÖNMEZ",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "GRATİS",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "GROSERİ",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "Gsk",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "GÖZ GRUP",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "GİMSA",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "HAKMAR",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "HUMMEL",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "Haribo",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Hayat Kimya",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Henkel",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Hepsi Jet",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Horeca Trade (İstanbul)",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Horeca İçecek Gıda Dağıtım (Edremit)",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "HİŞİM",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "IKEA",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "Imperial Tobacco",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "JOKER",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "Jti",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "KAHVE DÜNYASI",
+      "sektor": "Yeme-İçme"
+    },
+    {
+      "isim": "KAYA ÇİFTLİĞİ",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "KESKİNOĞLU",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "KOMPEDAN",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "Kavaklıdere",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Kayra",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Kebir Süt",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Kent (Mondelez)",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Koza Gıda (Koza Gourmet)",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Küresel Tedarik (Anele)",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Küresel Tedarik Zinciri",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "KİM MARKET",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "LES BENJAMİN",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "LEZİTA",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "LOYA",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "La Lorraine",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Lila Kağıt",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Loreal (Eczane Kanalı)",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Loreal (Kuaför Kanalı)",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Loreal (Tüketici Kanalı)",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "MARKAPARK",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "MAVİ JEANS",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "MEDIA MARKT",
+      "sektor": "Elektronik & Beyaz Eşya"
+    },
+    {
+      "isim": "MONDİ",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "MOPAŞ",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "MR. DIY",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "Mars Gıda",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Marshall",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Mey - Diageo",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Mondelez",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "MİGROS",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "NAMET",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "NOCTURNE",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "NOVASTORE",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "Nestle - Professional",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Nestle - Retail",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Nestle Waters",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Nestlé",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Netlog Küresel Paz.",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Newal",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "OPMAR OPTİK",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "OXXO",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "PANÇO",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "PAULMARK",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "PEHLİVANOĞLU",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "PENTİ",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "PEYNİRCİ BABA",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "PSL - GALLERY CRYSTAL",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "PTT KARGO",
+      "sektor": "Lojistik & Kargo"
+    },
+    {
+      "isim": "Paket Taxi",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Pepsi",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Pernod Ricard",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Philip Morris/Sabancı (Philsa – Philmar)",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Procter & Gamble",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "REEDER",
+      "sektor": "Elektronik & Beyaz Eşya"
+    },
+    {
+      "isim": "Redbull",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Royal Canin",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "SCHAFER",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "SO CHIC",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "SUVARİ",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "Sanipak (Eczacıbaşı)",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Satem Grup (Oyak)",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Selçuk Ecza Deposu",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Sevilen",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "SÜRAT KARGO",
+      "sektor": "Lojistik & Kargo"
+    },
+    {
+      "isim": "SÜTAŞ",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "TALİPSAN",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "TARIM KREDİ MARKETLERİ",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "TAÇ",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "TOYPA",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "TRABZONSPOR MAĞAZACILIK",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "Tadım",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Tchibo",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Tikveşli",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "TrendyolGo",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Turkuaz",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Türk Tuborg",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Uludağ Dubai",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Uludağ İçecek",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Unilever",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "VAKKO",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "VATAN BİLGİSAYAR",
+      "sektor": "Elektronik & Beyaz Eşya"
+    },
+    {
+      "isim": "Weitnauer",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "YENİ ÇAĞDAŞ",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "YemekSepeti Kurye",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "test",
+      "sektor": "Elektronik & Beyaz Eşya"
+    },
+    {
+      "isim": "ÇAK TEKSTİL LTB",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "Çaykur",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "ÇİÇEK İÇ GİYİM",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "ÖRNEK MARKET",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "ÖZHAN MARKET",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "ÖZKURUŞLAR",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "ÖZLENİR GRUP",
+      "sektor": "Hazır Giyim"
+    },
+    {
+      "isim": "Özgörkey",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "İNCİ DERİ",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "İSTİKBAL",
+      "sektor": "Ev & Yaşam / Yapı Market"
+    },
+    {
+      "isim": "İTİMAT",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "İZMAR",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "ŞAHİN SUCUKLARI",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "ŞOK",
+      "sektor": "Gıda Perakendesi"
+    },
+    {
+      "isim": "Şen Piliç",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Şölen",
+      "sektor": "FMCG Dağıtım Kanalları"
+    },
+    {
+      "isim": "Şölen Irak",
+      "sektor": "FMCG Dağıtım Kanalları"
+    }
   ],
   "KasaPOS Firmaları": [
-    "Nebim",
-    "Logo",
-    "Mikro",
-    "Uyumsoft",
-    "EnPOS",
-    "POS A.Ş.",
-    "Toshiba",
-    "NCR",
-    "Menulux",
-    "Protel",
-    "Sentez",
-    "Perkon",
-    "Akınsoft",
-    "Paraşüt",
-    "Asis"
+    {
+      "isim": "Nebim",
+      "sektor": "KasaPOS / ERP"
+    },
+    {
+      "isim": "Logo",
+      "sektor": "KasaPOS / ERP"
+    },
+    {
+      "isim": "Mikro",
+      "sektor": "KasaPOS / ERP"
+    },
+    {
+      "isim": "EnPOS",
+      "sektor": "KasaPOS / ERP"
+    },
+    {
+      "isim": "POS A.Ş.",
+      "sektor": "KasaPOS / ERP"
+    },
+    {
+      "isim": "Toshiba",
+      "sektor": "KasaPOS / ERP"
+    },
+    {
+      "isim": "NCR",
+      "sektor": "KasaPOS / ERP"
+    },
+    {
+      "isim": "Menulux",
+      "sektor": "KasaPOS / ERP"
+    }
   ],
   "Rakipler": [
-    "Ingenico",
-    "Worldline",
-    "Verifone",
-    "Hugin",
-    "Payten",
-    "Token",
-    "Newland",
-    "Sunmi",
-    "Castles",
-    "Datecs",
-    "PayCore",
-    "Profilo"
+    {
+      "isim": "Ingenico",
+      "sektor": "Ödeme Sistemleri"
+    },
+    {
+      "isim": "Worldline",
+      "sektor": "Ödeme Sistemleri"
+    },
+    {
+      "isim": "Verifone",
+      "sektor": "Ödeme Sistemleri"
+    },
+    {
+      "isim": "Hugin",
+      "sektor": "Ödeme Sistemleri"
+    },
+    {
+      "isim": "Payten",
+      "sektor": "Ödeme Sistemleri"
+    },
+    {
+      "isim": "Token",
+      "sektor": "Ödeme Sistemleri"
+    },
+    {
+      "isim": "Newland",
+      "sektor": "Ödeme Sistemleri"
+    },
+    {
+      "isim": "Sunmi",
+      "sektor": "Ödeme Sistemleri"
+    }
   ],
   "Fintech & Bankalar": [
-    "Akbank",
-    "Garanti BBVA",
-    "Yapı Kredi",
-    "İş Bankası",
-    "QNB",
-    "DenizBank",
-    "Kuveyt Türk",
-    "Param",
-    "Ödeal",
-    "iyzico",
-    "PayTR",
-    "Papara",
-    "Moka",
-    "Sipay",
-    "Paynet",
-    "Tosla"
+    {
+      "isim": "Akbank",
+      "sektor": "Bankacılık"
+    },
+    {
+      "isim": "Garanti BBVA",
+      "sektor": "Bankacılık"
+    },
+    {
+      "isim": "Yapı Kredi",
+      "sektor": "Bankacılık"
+    },
+    {
+      "isim": "İş Bankası",
+      "sektor": "Bankacılık"
+    },
+    {
+      "isim": "QNB",
+      "sektor": "Bankacılık"
+    },
+    {
+      "isim": "DenizBank",
+      "sektor": "Bankacılık"
+    },
+    {
+      "isim": "Kuveyt Türk",
+      "sektor": "Bankacılık"
+    },
+    {
+      "isim": "Param",
+      "sektor": "Fintech"
+    },
+    {
+      "isim": "Ödeal",
+      "sektor": "Fintech"
+    },
+    {
+      "isim": "iyzico",
+      "sektor": "Fintech"
+    },
+    {
+      "isim": "PayTR",
+      "sektor": "Fintech"
+    },
+    {
+      "isim": "Papara",
+      "sektor": "Fintech"
+    }
   ]
 }

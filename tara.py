@@ -1,11 +1,10 @@
 """
-PAX Retail Signal Engine
-------------------------
-- takip_listesi.json dosyasından takip edilecek firmaları/markaları okur.
-- kaynak_listesi.json dosyasından taranacak RSS/Web kaynaklarını okur.
-- Haberleri tarar, firma eşleşmelerini kategori bazında gruplar.
+PAX Retail Signal Engine V2 — Sektörlü takip listesi
+----------------------------------------------------
+- takip_listesi.json: kategori + isim + sektör okur.
+- kaynak_listesi.json: RSS/Web kaynaklarını okur.
 - GitHub Issue açar.
-- gorulen_haberler.json ile duplicate haberleri önler.
+- gorulen_haberler.json ile aynı haberi tekrar bildirmez.
 """
 
 import os
@@ -20,7 +19,7 @@ from datetime import datetime
 from urllib.parse import urljoin, urlparse
 
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
-GITHUB_REPO = os.environ.get("GITHUB_REPOSITORY") or "cagdasai/PAX-Retail-Signal-Engine"
+GITHUB_REPO = os.environ.get("GITHUB_REPOSITORY") or "cagdasai/pax-retail-signal-engine"
 
 TAKIP_DOSYA = "takip_listesi.json"
 KAYNAK_DOSYA = "kaynak_listesi.json"
@@ -36,27 +35,21 @@ HEADERS = {
     "Accept-Language": "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7",
 }
 
-# Kısa / genel isimlerde false positive azaltmak için kelime sınırı kullanılır.
 HASSAS_TERIMLER = {
     "File", "Civil", "Mars", "Gusto", "Elle", "Jumbo", "Eker", "Mondi",
     "Efes", "Ekomini", "Flo", "BAT", "Dagi", "Avva", "Loya", "SPX",
     "Chakra", "Emsan", "Jacobs", "Mado", "Namet", "Eti", "Subway",
     "Aroma", "Porland", "Pepsi", "Newal", "Bunge", "Şok", "Çilek",
-    "İçim", "Mudo", "Panço", "Logo", "NCR", "QNB"
+    "İçim", "Mudo", "Panço", "Logo", "NCR", "QNB", "BJK", "LCW"
 }
 
 
 def normalize(text):
     if not text:
         return ""
-    text = html.unescape(str(text))
-    text = text.lower()
-    text = text.replace("ı", "i").replace("İ", "i")
-    text = text.replace("ğ", "g").replace("Ğ", "g")
-    text = text.replace("ü", "u").replace("Ü", "u")
-    text = text.replace("ş", "s").replace("Ş", "s")
-    text = text.replace("ö", "o").replace("Ö", "o")
-    text = text.replace("ç", "c").replace("Ç", "c")
+    text = html.unescape(str(text)).lower()
+    table = str.maketrans("ıİğĞüÜşŞöÖçÇ", "iiggüüssööcc")
+    text = text.translate(table)
     text = re.sub(r"\s+", " ", text)
     return text.strip()
 
@@ -72,22 +65,8 @@ def json_oku(path, default):
 
 
 def json_yaz(path, data):
-    try:
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
-    except Exception as e:
-        print(f"{path} yazılamadı:", e)
-
-
-def gorulen_yukle():
-    return json_oku(GORULEN_DOSYA, {})
-
-
-def gorulen_kaydet(gorulen):
-    now = time.time()
-    threshold = now - (GORULDU_GUN * 24 * 3600)
-    temiz = {k: v for k, v in gorulen.items() if isinstance(v, (int, float)) and v > threshold}
-    json_yaz(GORULEN_DOSYA, temiz)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
 
 
 def haber_id(link, title):
@@ -118,21 +97,13 @@ def rss_tara(kaynak):
         root = ET.fromstring(content)
         haberler = []
 
-        # RSS item
         for item in root.findall(".//item"):
             title = text_from_element(item.find("title"))
             link = text_from_element(item.find("link"))
             desc = text_from_element(item.find("description"))
-
             if title and link:
-                haberler.append({
-                    "kaynak": isim,
-                    "baslik": title,
-                    "link": link,
-                    "ozet": desc
-                })
+                haberler.append({"kaynak": isim, "baslik": title, "link": link, "ozet": desc})
 
-        # Atom entry fallback
         ns = {"atom": "http://www.w3.org/2005/Atom"}
         for entry in root.findall(".//atom:entry", ns):
             title_el = entry.find("atom:title", ns)
@@ -140,18 +111,11 @@ def rss_tara(kaynak):
             summary_el = entry.find("atom:summary", ns)
 
             title = text_from_element(title_el)
-            link = ""
-            if link_el is not None:
-                link = link_el.attrib.get("href", "").strip()
+            link = link_el.attrib.get("href", "").strip() if link_el is not None else ""
             desc = text_from_element(summary_el)
 
             if title and link:
-                haberler.append({
-                    "kaynak": isim,
-                    "baslik": title,
-                    "link": link,
-                    "ozet": desc
-                })
+                haberler.append({"kaynak": isim, "baslik": title, "link": link, "ozet": desc})
 
         return haberler, None
     except Exception as e:
@@ -169,7 +133,6 @@ def web_tara(kaynak):
         text = raw.decode("utf-8", errors="ignore")
         base = f"{urlparse(web_url).scheme}://{urlparse(web_url).netloc}"
 
-        # Basit HTML anchor parser: <a href="...">Başlık</a>
         pattern = re.compile(r'<a\s+[^>]*href=["\']([^"\']+)["\'][^>]*>(.*?)</a>', re.I | re.S)
         haberler = []
         seen = set()
@@ -177,7 +140,6 @@ def web_tara(kaynak):
         for href, inner in pattern.findall(text):
             title = re.sub(r"<[^>]+>", " ", inner)
             title = html.unescape(re.sub(r"\s+", " ", title)).strip()
-
             if len(title) < 15:
                 continue
 
@@ -187,12 +149,7 @@ def web_tara(kaynak):
                 continue
             seen.add(key)
 
-            haberler.append({
-                "kaynak": isim,
-                "baslik": title,
-                "link": link,
-                "ozet": ""
-            })
+            haberler.append({"kaynak": isim, "baslik": title, "link": link, "ozet": ""})
 
         return haberler, None
     except Exception as e:
@@ -201,9 +158,7 @@ def web_tara(kaynak):
 
 def kaynak_tara(kaynak):
     isim = kaynak.get("isim", "Bilinmeyen")
-    rss_url = (kaynak.get("rss") or "").strip()
-
-    if rss_url:
+    if (kaynak.get("rss") or "").strip():
         haberler, hata = rss_tara(kaynak)
         if haberler:
             print(f"✅ {isim}: RSS ile {len(haberler)} haber")
@@ -221,18 +176,35 @@ def kaynak_tara(kaynak):
 
 def takip_map_hazirla(takip_listesi):
     items = []
-    for kategori, firmalar in takip_listesi.items():
-        if not isinstance(firmalar, list):
+
+    for kategori, kayitlar in takip_listesi.items():
+        if not isinstance(kayitlar, list):
             continue
-        for firma in firmalar:
-            if not firma:
+
+        for kayit in kayitlar:
+            if isinstance(kayit, str):
+                isim = kayit
+                sektor = ""
+            elif isinstance(kayit, dict):
+                isim = kayit.get("isim") or kayit.get("firma") or ""
+                sektor = kayit.get("sektor") or ""
+            else:
                 continue
+
+            isim = str(isim).strip()
+            sektor = str(sektor).strip()
+
+            if not isim:
+                continue
+
             items.append({
                 "kategori": kategori,
-                "firma": firma,
-                "firma_norm": normalize(firma),
-                "hassas": firma in HASSAS_TERIMLER
+                "firma": isim,
+                "sektor": sektor,
+                "firma_norm": normalize(isim),
+                "hassas": isim in HASSAS_TERIMLER
             })
+
     return items
 
 
@@ -240,7 +212,7 @@ def eslesme_var_mi(text_norm, firma_norm, hassas):
     if not firma_norm:
         return False
 
-    if hassas:
+    if hassas or len(firma_norm) <= 4:
         pattern = r"(?<![a-z0-9])" + re.escape(firma_norm) + r"(?![a-z0-9])"
         return bool(re.search(pattern, text_norm))
 
@@ -258,6 +230,7 @@ def haberleri_eslestir(haberler, takip_listesi):
                 h = haber.copy()
                 h["kategori"] = item["kategori"]
                 h["firma"] = item["firma"]
+                h["sektor"] = item["sektor"]
                 eslesen.append(h)
                 break
 
@@ -266,6 +239,11 @@ def haberleri_eslestir(haberler, takip_listesi):
 
 def issue_body_olustur(yeni_haberler, tum_haber_sayisi, toplam_eslesen, sorunlu_kaynaklar, takip_listesi, kaynak_listesi):
     tarih = datetime.now().strftime("%d.%m.%Y %H:%M")
+
+    sektor_sayim = {}
+    for h in yeni_haberler:
+        sektor = h.get("sektor") or "Sektör yok"
+        sektor_sayim[sektor] = sektor_sayim.get(sektor, 0) + 1
 
     body = f"""# PAX Retail Signal Engine — Günlük Rapor
 
@@ -281,6 +259,12 @@ def issue_body_olustur(yeni_haberler, tum_haber_sayisi, toplam_eslesen, sorunlu_
 
 """
 
+    if sektor_sayim:
+        body += "## Sektör Dağılımı\n\n"
+        for sektor, adet in sorted(sektor_sayim.items(), key=lambda x: x[1], reverse=True):
+            body += f"- **{sektor}:** {adet} haber\n"
+        body += "\n"
+
     kategori_sirasi = ["Müşteriler", "KasaPOS Firmaları", "Rakipler", "Fintech & Bankalar"]
 
     if yeni_haberler:
@@ -289,17 +273,11 @@ def issue_body_olustur(yeni_haberler, tum_haber_sayisi, toplam_eslesen, sorunlu_
             grup = [h for h in yeni_haberler if h.get("kategori") == kategori]
             if not grup:
                 continue
+
             body += f"### {kategori} ({len(grup)})\n\n"
             for h in grup:
-                body += f"- **{h.get('firma')}** — [{h.get('baslik')}]({h.get('link')})\n"
-                body += f"  - Kaynak: {h.get('kaynak')}\n"
-            body += "\n"
-
-        diger = [h for h in yeni_haberler if h.get("kategori") not in kategori_sirasi]
-        if diger:
-            body += f"### Diğer ({len(diger)})\n\n"
-            for h in diger:
-                body += f"- **{h.get('firma')}** — [{h.get('baslik')}]({h.get('link')})\n"
+                sektor = f" — {h.get('sektor')}" if h.get("sektor") else ""
+                body += f"- **{h.get('firma')}**{sektor} — [{h.get('baslik')}]({h.get('link')})\n"
                 body += f"  - Kaynak: {h.get('kaynak')}\n"
             body += "\n"
     else:
@@ -313,8 +291,8 @@ def issue_body_olustur(yeni_haberler, tum_haber_sayisi, toplam_eslesen, sorunlu_
 
     body += "---\n\n## Takip Kapsamı\n\n"
     for kategori in kategori_sirasi:
-        firmalar = takip_listesi.get(kategori, [])
-        body += f"- **{kategori}:** {len(firmalar)} kayıt\n"
+        kayitlar = takip_listesi.get(kategori, [])
+        body += f"- **{kategori}:** {len(kayitlar)} kayıt\n"
     body += f"- **Kaynak siteler:** {len(kaynak_listesi)} kayıt\n"
 
     body += "\n---\nBu issue GitHub Actions tarafından otomatik oluşturuldu.\n"
@@ -323,19 +301,15 @@ def issue_body_olustur(yeni_haberler, tum_haber_sayisi, toplam_eslesen, sorunlu_
 
 def issue_ac(yeni_haberler, tum_haber_sayisi, toplam_eslesen, sorunlu_kaynaklar, takip_listesi, kaynak_listesi):
     tarih = datetime.now().strftime("%d.%m.%Y %H:%M")
-
-    if yeni_haberler:
-        title = f"📰 PAX Retail Signal Engine — {len(yeni_haberler)} yeni haber — {tarih}"
-    else:
-        title = f"✅ PAX Retail Signal Engine — sistem çalıştı — {tarih}"
+    title = (
+        f"📰 PAX Retail Signal Engine — {len(yeni_haberler)} yeni haber — {tarih}"
+        if yeni_haberler
+        else f"✅ PAX Retail Signal Engine — sistem çalıştı — {tarih}"
+    )
 
     body = issue_body_olustur(
-        yeni_haberler,
-        tum_haber_sayisi,
-        toplam_eslesen,
-        sorunlu_kaynaklar,
-        takip_listesi,
-        kaynak_listesi
+        yeni_haberler, tum_haber_sayisi, toplam_eslesen,
+        sorunlu_kaynaklar, takip_listesi, kaynak_listesi
     )
 
     if not GITHUB_TOKEN:
@@ -362,17 +336,13 @@ def issue_ac(yeni_haberler, tum_haber_sayisi, toplam_eslesen, sorunlu_kaynaklar,
         }
     )
 
-    try:
-        with urllib.request.urlopen(req, timeout=25) as response:
-            result = response.read().decode("utf-8")
-            print("✅ Issue açıldı:", result[:300])
-    except Exception as e:
-        print("❌ Issue açılamadı:", str(e))
-        raise
+    with urllib.request.urlopen(req, timeout=25) as response:
+        result = response.read().decode("utf-8")
+        print("✅ Issue açıldı:", result[:300])
 
 
 def main():
-    print("🔍 PAX Retail Signal Engine başladı")
+    print("🔍 PAX Retail Signal Engine V2 başladı")
 
     takip_listesi = json_oku(TAKIP_DOSYA, {})
     kaynak_listesi = json_oku(KAYNAK_DOSYA, [])
@@ -382,23 +352,19 @@ def main():
     if not kaynak_listesi:
         raise RuntimeError(f"{KAYNAK_DOSYA} boş veya okunamadı.")
 
-    print(f"Takip kategorisi: {len(takip_listesi)}")
-    print(f"Kaynak sayısı: {len(kaynak_listesi)}")
-
-    gorulen = gorulen_yukle()
+    gorulen = json_oku(GORULEN_DOSYA, {})
     tum_haberler = []
     sorunlu = []
+
+    print(f"Takip kategorisi: {len(takip_listesi)}")
+    print(f"Kaynak sayısı: {len(kaynak_listesi)}")
 
     for i, kaynak in enumerate(kaynak_listesi, 1):
         print(f"[{i}/{len(kaynak_listesi)}] {kaynak.get('isim')}")
         haberler, hata, tip = kaynak_tara(kaynak)
 
         if hata and not haberler:
-            sorunlu.append({
-                "isim": kaynak.get("isim"),
-                "hata": hata,
-                "tip": tip
-            })
+            sorunlu.append({"isim": kaynak.get("isim"), "hata": hata, "tip": tip})
 
         tum_haberler.extend(haberler)
 
@@ -408,11 +374,19 @@ def main():
     eslesen = haberleri_eslestir(tum_haberler, takip_listesi)
 
     yeni = []
+    now = time.time()
+    threshold = now - (GORULDU_GUN * 24 * 3600)
+
+    temiz_gorulen = {}
+    for k, v in gorulen.items():
+        if isinstance(v, (int, float)) and v > threshold:
+            temiz_gorulen[k] = v
+
     for h in eslesen:
         hid = haber_id(h.get("link", ""), h.get("baslik", ""))
-        if hid not in gorulen:
+        if hid not in temiz_gorulen:
             yeni.append(h)
-            gorulen[hid] = time.time()
+            temiz_gorulen[hid] = now
 
     print("=== ÖZET ===")
     print("Toplam haber/link:", len(tum_haberler))
@@ -421,7 +395,7 @@ def main():
     print("Sorunlu kaynak:", len(sorunlu))
 
     issue_ac(yeni, len(tum_haberler), len(eslesen), sorunlu, takip_listesi, kaynak_listesi)
-    gorulen_kaydet(gorulen)
+    json_yaz(GORULEN_DOSYA, temiz_gorulen)
 
     print("✅ Tamamlandı")
 
