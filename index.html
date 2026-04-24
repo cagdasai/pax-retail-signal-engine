@@ -2,21 +2,24 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>PAX Signal Panel</title>
+<title>PAX Signal Admin</title>
 <style>
-body{font-family:Arial;background:#111;color:white;padding:20px}
-.card{background:#222;padding:15px;border-radius:10px;margin-bottom:15px}
-input,select{padding:8px;margin:5px;width:200px}
+body{font-family:Arial;background:#0f172a;color:white;padding:20px}
+.card{background:#1e293b;padding:15px;border-radius:12px;margin-bottom:20px}
+input,select{padding:8px;margin:5px}
 button{padding:8px;margin:5px;cursor:pointer}
+ul{list-style:none;padding:0}
+li{margin:5px 0;background:#334155;padding:6px;border-radius:6px}
 </style>
 </head>
 <body>
 
-<h1>PAX Signal Engine</h1>
+<h1>PAX Signal Admin Panel</h1>
 
 <div class="card">
-<h3>Müşteriler</h3>
-<input id="name"><select id="sector">
+<h2>Firma Ekle</h2>
+<input id="fname" placeholder="Firma">
+<select id="fsector">
 <option>Hazır Giyim</option>
 <option>Ev & Yaşam / Yapı Market</option>
 <option>FMCG Dağıtım Kanalları</option>
@@ -25,48 +28,68 @@ button{padding:8px;margin:5px;cursor:pointer}
 <option>Lojistik & Kargo</option>
 <option>Yeme-İçme</option>
 </select>
-<button onclick="add()">Ekle</button>
+<button onclick="addFirma()">Ekle</button>
 
-<ul id="list"></ul>
+<ul id="firmaList"></ul>
 </div>
 
-<button onclick="generate()">JSON Oluştur</button>
+<div class="card">
+<h2>Kaynak Site Ekle</h2>
+<input id="sname" placeholder="Site adı">
+<input id="srss" placeholder="RSS URL">
+<input id="sweb" placeholder="Web URL">
+<button onclick="addSource()">Ekle</button>
+
+<ul id="sourceList"></ul>
+</div>
+
+<button onclick="exportJSON()">JSON Oluştur</button>
 
 <textarea id="out" style="width:100%;height:300px"></textarea>
 
 <script>
-let data = [];
+let firmalar=[];
+let kaynaklar=[];
 
-function add(){
-  const name = document.getElementById("name").value;
-  const sector = document.getElementById("sector").value;
+function addFirma(){
+let isim=document.getElementById("fname").value;
+let sektor=document.getElementById("fsector").value;
+if(!isim) return;
+firmalar.push({isim,sektor});
+render();
+}
 
-  if(!name) return;
-
-  data.push({isim:name,sektor:sector});
-  render();
+function addSource(){
+let isim=document.getElementById("sname").value;
+let rss=document.getElementById("srss").value;
+let web=document.getElementById("sweb").value;
+if(!isim) return;
+kaynaklar.push({isim,rss,web});
+render();
 }
 
 function render(){
-  const ul = document.getElementById("list");
-  ul.innerHTML="";
-  data.forEach((d,i)=>{
-    const li=document.createElement("li");
-    li.innerHTML = d.isim + " - " + d.sektor + 
-    " <button onclick='del("+i+")'>X</button>";
-    ul.appendChild(li);
-  });
+let fList=document.getElementById("firmaList");
+fList.innerHTML="";
+firmalar.forEach((f,i)=>{
+fList.innerHTML+=`<li>${f.isim} - ${f.sektor} <button onclick="delF(${i})">X</button></li>`;
+});
+
+let sList=document.getElementById("sourceList");
+sList.innerHTML="";
+kaynaklar.forEach((s,i)=>{
+sList.innerHTML+=`<li>${s.isim} <button onclick="delS(${i})">X</button></li>`;
+});
 }
 
-function del(i){
-  data.splice(i,1);
-  render();
-}
+function delF(i){firmalar.splice(i,1);render();}
+function delS(i){kaynaklar.splice(i,1);render();}
 
-function generate(){
-  document.getElementById("out").value = JSON.stringify({
-    "Müşteriler": data
-  },null,2);
+function exportJSON(){
+document.getElementById("out").value=JSON.stringify({
+takip_listesi:{Müşteriler:firmalar},
+kaynak_listesi:kaynaklar
+},null,2);
 }
 </script>
 
