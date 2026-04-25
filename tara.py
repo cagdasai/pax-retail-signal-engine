@@ -49,7 +49,7 @@ HASSAS_TERIMLER = {
     "Efes", "Ekomini", "Flo", "BAT", "Dagi", "Avva", "Loya", "SPX",
     "Chakra", "Emsan", "Jacobs", "Mado", "Namet", "Eti", "Subway",
     "Aroma", "Porland", "Pepsi", "Newal", "Bunge", "Şok", "Çilek",
-    "İçim", "Mudo", "Panço", "Logo", "NCR", "QNB", "BJK", "LCW"
+    "İçim", "Mudo", "Panço", "Logo", "NCR", "QNB", "BJK", "LCW", "imza"
 }
 
 
