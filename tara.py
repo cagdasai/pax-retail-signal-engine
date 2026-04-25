@@ -49,7 +49,7 @@ HASSAS_TERIMLER = {
     "Efes", "Ekomini", "Flo", "BAT", "Dagi", "Avva", "Loya", "SPX",
     "Chakra", "Emsan", "Jacobs", "Mado", "Namet", "Eti", "Subway",
     "Aroma", "Porland", "Pepsi", "Newal", "Bunge", "Şok", "Çilek",
-    "İçim", "Mudo", "Panço", "Logo", "NCR", "QNB", "BJK", "LCW", "imza"
+    "İçim", "Mudo", "Panço", "Logo", "NCR", "QNB", "BJK", "LCW"
 }
 
 
@@ -684,8 +684,9 @@ def main():
         hid = haber_id(h.get("link", ""), h.get("baslik", ""))
 
         if hid not in temiz_gorulen:
+            h = h.copy()
+            h["_haber_id"] = hid
             yeni.append(h)
-            temiz_gorulen[hid] = now
 
     print("=== ÖZET ===")
     print("Toplam haber/link:", len(tum_haberler))
@@ -720,8 +721,17 @@ def main():
         mail_body
     )
 
+    # Kritik davranış:
+    # Toplam yeni haber 284 olsa bile sadece mailde gösterilen/gönderilen ilk 50 kayıt
+    # gorulen_haberler.json içine yazılır. Böylece bir sonraki çalıştırmada kalan haberler
+    # sıradaki batch olarak gelir.
+    for h in yeni_mail:
+        hid = h.get("_haber_id") or haber_id(h.get("link", ""), h.get("baslik", ""))
+        temiz_gorulen[hid] = now
+
     json_yaz(GORULEN_DOSYA, temiz_gorulen)
 
+    print(f"✅ Görülen haber kayıt edildi: {len(yeni_mail)} / {len(yeni)}")
     print("✅ Tamamlandı")
 
 
